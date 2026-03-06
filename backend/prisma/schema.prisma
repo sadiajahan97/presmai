@@ -14,6 +14,31 @@ model User {
   name           String
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
+  chats          Chat[]
 
   @@map("users")
+}
+
+model Chat {
+  id        String    @id @default(uuid())
+  name      String    @default("New Chat")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  messages  Message[]
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@map("chats")
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String?
+  image     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id])
+
+  @@map("messages")
 }

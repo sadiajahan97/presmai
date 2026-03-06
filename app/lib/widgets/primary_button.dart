@@ -5,6 +5,7 @@ import '../theme/app_colors.dart';
 class PrimaryButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
+  final bool isLoading;
   final bool isOutlined;
   final double? width;
 
@@ -14,6 +15,7 @@ class PrimaryButton extends StatelessWidget {
     this.onPressed,
     this.isOutlined = false,
     this.width,
+    this.isLoading = false,
   });
 
   @override
@@ -32,16 +34,25 @@ class PrimaryButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text(
-                label,
-                style: GoogleFonts.manrope(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+              child: isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.slate900),
+                      ),
+                    )
+                  : Text(
+                      label,
+                      style: GoogleFonts.manrope(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
             )
           : ElevatedButton(
-              onPressed: onPressed,
+              onPressed: isLoading ? null : onPressed,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.slate900,
@@ -51,13 +62,22 @@ class PrimaryButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text(
-                label,
-                style: GoogleFonts.manrope(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+              child: isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : Text(
+                      label,
+                      style: GoogleFonts.manrope(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
             ),
     );
   }

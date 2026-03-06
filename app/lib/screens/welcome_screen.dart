@@ -208,7 +208,7 @@ class WelcomeScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(32),
                 child: Text(
-                  '© 2024 PresMAI. Your health data is always secure and private.',
+                  '© 2026 PresMAI. Your health data is always secure and private.',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.manrope(
                     fontSize: 12,

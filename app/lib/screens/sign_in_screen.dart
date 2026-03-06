@@ -4,9 +4,55 @@ import '../theme/app_colors.dart';
 import '../widgets/input_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/trust_badge.dart';
+import '../services/auth_service.dart';
 
-class SignInScreen extends StatelessWidget {
+class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _authService = AuthService();
+  bool _isLoading = false;
+
+  Future<void> _handleSignIn() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter both email and password')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    final result = await _authService.signIn(email, password);
+
+    if (!mounted) return;
+
+    setState(() => _isLoading = false);
+
+    if (result['success']) {
+      Navigator.pushReplacementNamed(context, '/chat');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result['message'] ?? 'Sign in failed')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +68,11 @@ class SignInScreen extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false),
                     child: Container(
                       width: 40,
                       height: 40,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.transparent,
                       ),
@@ -55,7 +101,7 @@ class SignInScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Icon(Icons.medical_services, color: AppColors.primary, size: 64),
                   ),
                 ),
@@ -90,16 +136,18 @@ class SignInScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const InputField(
+                    InputField(
                       label: 'Email Address',
-                      hint: 'name@example.com',
+                      hint: 'Enter your email',
                       keyboardType: TextInputType.emailAddress,
+                      controller: _emailController,
                     ),
                     const SizedBox(height: 20),
-                    const InputField(
+                    InputField(
                       label: 'Password',
                       hint: 'Enter your password',
                       isPassword: true,
+                      controller: _passwordController,
                     ),
                     const SizedBox(height: 8),
                     Align(
@@ -119,7 +167,8 @@ class SignInScreen extends StatelessWidget {
                     const SizedBox(height: 24),
                     PrimaryButton(
                       label: 'Sign In',
-                      onPressed: () => Navigator.pushReplacementNamed(context, '/chat'),
+                      isLoading: _isLoading,
+                      onPressed: _handleSignIn,
                     ),
                   ],
                 ),
@@ -139,7 +188,7 @@ class SignInScreen extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, '/signup'),
+                    onTap: () => Navigator.pushReplacementNamed(context, '/signup'),
                     child: Text(
                       'Sign Up',
                       style: GoogleFonts.manrope(
@@ -163,7 +212,7 @@ class SignInScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.smart_toy, size: 20, color: AppColors.slate400),
+                   const Icon(Icons.smart_toy, size: 20, color: AppColors.slate400),
                   const SizedBox(width: 8),
                   Text(
                     'Powered by PresMAI Intelligence',

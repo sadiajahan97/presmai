@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_colors.dart';
 import '../widgets/input_field.dart';
 import '../widgets/primary_button.dart';
+import '../services/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,7 +13,67 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final _authService = AuthService();
+  
   bool _termsAccepted = false;
+  bool _isLoading = false;
+
+  Future<void> _handleSignUp() async {
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+
+    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
+
+    if (!_termsAccepted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please accept the Terms of Service')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    final result = await _authService.signUp(email, password, name);
+
+    if (!mounted) return;
+
+    setState(() => _isLoading = false);
+
+    if (result['success']) {
+      Navigator.pushReplacementNamed(context, '/chat');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result['message'] ?? 'Sign up failed')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false),
                       child: Container(
                         width: 48,
                         height: 48,
@@ -116,31 +177,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
                 child: Column(
                   children: [
-                    const InputField(
+                    InputField(
                       label: 'Full Name',
-                      hint: 'John Doe',
+                      hint: 'Enter your name',
                       prefixIcon: Icons.person_outlined,
+                      controller: _nameController,
                     ),
                     const SizedBox(height: 16),
-                    const InputField(
+                    InputField(
                       label: 'Email Address',
-                      hint: 'name@example.com',
+                      hint: 'Enter your email',
                       prefixIcon: Icons.email_outlined,
                       keyboardType: TextInputType.emailAddress,
+                      controller: _emailController,
                     ),
                     const SizedBox(height: 16),
-                    const InputField(
+                    InputField(
                       label: 'Password',
-                      hint: 'Create a password',
+                      hint: 'Enter your password',
                       prefixIcon: Icons.lock_outline,
                       isPassword: true,
+                      controller: _passwordController,
                     ),
                     const SizedBox(height: 16),
-                    const InputField(
+                    InputField(
                       label: 'Confirm Password',
-                      hint: 'Repeat password',
+                      hint: 'Confirm your password',
                       prefixIcon: Icons.lock_reset_outlined,
                       isPassword: true,
+                      controller: _confirmPasswordController,
                     ),
 
                     // Terms checkbox
@@ -156,7 +221,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             onChanged: (v) => setState(() => _termsAccepted = v ?? false),
                             activeColor: AppColors.primary,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                            side: BorderSide(color: AppColors.slate200),
+                            side: const BorderSide(color: AppColors.slate200),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -170,12 +235,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                               children: [
                                 const TextSpan(text: 'I agree to the '),
-                                TextSpan(
+                                const TextSpan(
                                   text: 'Terms of Service',
                                   style: TextStyle(color: AppColors.primary),
                                 ),
                                 const TextSpan(text: ' and '),
-                                TextSpan(
+                                const TextSpan(
                                   text: 'Privacy Policy',
                                   style: TextStyle(color: AppColors.primary),
                                 ),
@@ -190,7 +255,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const SizedBox(height: 20),
                     PrimaryButton(
                       label: 'Sign Up',
-                      onPressed: () => Navigator.pushReplacementNamed(context, '/chat'),
+                      isLoading: _isLoading,
+                      onPressed: _handleSignUp,
                     ),
                   ],
                 ),
@@ -230,7 +296,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.verified_user, size: 14, color: AppColors.slate400),
+                        const Icon(Icons.verified_user, size: 14, color: AppColors.slate400),
                         const SizedBox(width: 4),
                         Text(
                           'HIPAA SECURE',
@@ -247,7 +313,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.enhanced_encryption, size: 14, color: AppColors.slate400),
+                        const Icon(Icons.enhanced_encryption, size: 14, color: AppColors.slate400),
                         const SizedBox(width: 4),
                         Text(
                           'AES-256 ENCRYPTED',
