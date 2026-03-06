@@ -40,7 +40,6 @@ class SignUpRequest(BaseModel):
     email: EmailStr
     password: str
     name: str
-    profession: str
 
 
 class SignInRequest(BaseModel):
@@ -99,7 +98,6 @@ async def sign_up(body: SignUpRequest, db: Prisma = Depends(get_db)):
             "email": body.email,
             "hashedPassword": hashed,
             "name": body.name,
-            "profession": body.profession,
         }
     )
 
