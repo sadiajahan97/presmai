@@ -46,6 +46,8 @@ class PresmaiAppBar extends StatelessWidget implements PreferredSizeWidget {
                 child: Text(
                   title,
                   textAlign: centerTitle ? TextAlign.center : TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                   style: GoogleFonts.manrope(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,

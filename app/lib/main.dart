@@ -4,7 +4,6 @@ import 'screens/welcome_screen.dart';
 import 'screens/sign_in_screen.dart';
 import 'screens/sign_up_screen.dart';
 import 'screens/ai_chat_screen.dart';
-import 'screens/chat_history_screen.dart';
 import 'screens/alerts_screen.dart';
 import 'screens/archive_screen.dart';
 
@@ -23,11 +22,11 @@ class PresMAIApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       initialRoute: '/welcome',
       routes: {
+        '/': (context) => const WelcomeScreen(),
         '/welcome': (context) => const WelcomeScreen(),
         '/signin': (context) => const SignInScreen(),
         '/signup': (context) => const SignUpScreen(),
         '/chat': (context) => const AiChatScreen(),
-        '/chat-history': (context) => const ChatHistoryScreen(),
         '/alerts': (context) => const AlertsScreen(),
         '/archive': (context) => const ArchiveScreen(),
       },

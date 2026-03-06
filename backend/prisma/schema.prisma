@@ -26,7 +26,7 @@ model Chat {
   updatedAt DateTime  @updatedAt @map("updated_at")
   messages  Message[]
   userId    String
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("chats")
 }
@@ -35,10 +35,11 @@ model Message {
   id        String   @id @default(uuid())
   content   String?
   image     String?
+  role      String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   chatId    String
-  chat      Chat     @relation(fields: [chatId], references: [id])
+  chat      Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   @@map("messages")
 }

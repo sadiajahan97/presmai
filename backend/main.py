@@ -8,6 +8,7 @@ load_dotenv()
 from prisma import Prisma
 
 from auth import router as auth_router
+from chats import router as chats_router
 from db import set_db
 
 prisma = Prisma()
@@ -37,6 +38,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
+app.include_router(chats_router)
 
 
 @app.get("/")

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_colors.dart';
 
@@ -71,13 +72,23 @@ class ChatBubble extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Text(
-                  message,
-                  style: GoogleFonts.manrope(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    height: 1.6,
-                    color: AppColors.slate800,
+                child: MarkdownBody(
+                  data: message,
+                  styleSheet: MarkdownStyleSheet(
+                    p: GoogleFonts.manrope(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      height: 1.6,
+                      color: AppColors.slate800,
+                    ),
+                    strong: GoogleFonts.manrope(
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.slate900,
+                    ),
+                    listBullet: GoogleFonts.manrope(
+                      fontSize: 14,
+                      color: AppColors.slate800,
+                    ),
                   ),
                 ),
               ),
@@ -114,13 +125,23 @@ class ChatBubble extends StatelessWidget {
                 ),
               ],
             ),
-            child: Text(
-              message,
-              style: GoogleFonts.manrope(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                height: 1.6,
-                color: AppColors.white,
+            child: MarkdownBody(
+              data: message,
+              styleSheet: MarkdownStyleSheet(
+                p: GoogleFonts.manrope(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  height: 1.6,
+                  color: AppColors.white,
+                ),
+                strong: GoogleFonts.manrope(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.white,
+                ),
+                listBullet: GoogleFonts.manrope(
+                  fontSize: 14,
+                  color: AppColors.white,
+                ),
               ),
             ),
           ),
