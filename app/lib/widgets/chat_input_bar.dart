@@ -29,26 +29,21 @@ class ChatInputBar extends StatelessWidget {
           // Camera & Image buttons
           Container(
             decoration: BoxDecoration(
-              color: AppColors.slate100,
+              color: AppColors.white,
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.slate200),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
+                _HoverIconButton(
                   onPressed: onCamera,
-                  icon: const Icon(Icons.photo_camera_outlined, size: 22),
-                  color: AppColors.slate500,
-                  padding: const EdgeInsets.all(8),
-                  constraints: const BoxConstraints(),
+                  icon: Icons.photo_camera_outlined,
                 ),
-                IconButton(
+                _HoverIconButton(
                   onPressed: onImage,
-                  icon: const Icon(Icons.image_outlined, size: 22),
-                  color: AppColors.slate500,
-                  padding: const EdgeInsets.all(8),
-                  constraints: const BoxConstraints(),
+                  icon: Icons.image_outlined,
                 ),
               ],
             ),
@@ -56,35 +51,37 @@ class ChatInputBar extends StatelessWidget {
           const SizedBox(width: 8),
           // Text input
           Expanded(
-            child: Container(
-              height: 48,
-              decoration: BoxDecoration(
-                color: AppColors.slate100,
-                borderRadius: BorderRadius.circular(12),
+            child: TextField(
+              controller: controller,
+              cursorColor: AppColors.slate900,
+              textAlignVertical: TextAlignVertical.center,
+              style: GoogleFonts.manrope(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: AppColors.slate900,
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Center(
-                child: TextField(
-                  controller: controller,
-                  style: GoogleFonts.manrope(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.slate900,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'Ask PresMAI anything...',
-                    hintStyle: GoogleFonts.manrope(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.slate400,
-                    ),
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.zero,
-                    isDense: true,
-                    filled: false,
-                  ),
+              decoration: InputDecoration(
+                hintText: 'Ask PresMAI anything...',
+                hintStyle: GoogleFonts.manrope(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.slate400,
+                ),
+                filled: true,
+                fillColor: AppColors.white,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                constraints: const BoxConstraints(minHeight: 48, maxHeight: 48),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.slate200),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.slate200),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: AppColors.primary, width: 2),
                 ),
               ),
             ),
@@ -112,6 +109,39 @@ class ChatInputBar extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _HoverIconButton extends StatefulWidget {
+  final IconData icon;
+  final VoidCallback? onPressed;
+
+  const _HoverIconButton({required this.icon, this.onPressed});
+
+  @override
+  State<_HoverIconButton> createState() => _HoverIconButtonState();
+}
+
+class _HoverIconButtonState extends State<_HoverIconButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: IconButton(
+        onPressed: widget.onPressed,
+        icon: Icon(widget.icon, size: 22),
+        color: _isHovered ? AppColors.primary : AppColors.slate500,
+        padding: const EdgeInsets.all(8),
+        constraints: const BoxConstraints(),
+        hoverColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        splashColor: Colors.transparent,
       ),
     );
   }

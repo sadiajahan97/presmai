@@ -26,6 +26,7 @@ class InputField extends StatefulWidget {
 
 class _InputFieldState extends State<InputField> {
   bool _obscured = true;
+  bool _isHovering = false;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +44,7 @@ class _InputFieldState extends State<InputField> {
         const SizedBox(height: 8),
         TextField(
           controller: widget.controller,
+          cursorColor: AppColors.slate900,
           obscureText: widget.isPassword && _obscured,
           keyboardType: widget.keyboardType,
           style: GoogleFonts.manrope(
@@ -64,14 +66,22 @@ class _InputFieldState extends State<InputField> {
                 : null,
             prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
             suffixIcon: widget.isPassword
-                ? GestureDetector(
-                    onTap: () => setState(() => _obscured = !_obscured),
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: Icon(
-                        _obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                        color: AppColors.slate400,
-                        size: 22,
+                ? MouseRegion(
+                    onEnter: (_) => setState(() => _isHovering = true),
+                    onExit: (_) => setState(() => _isHovering = false),
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () => setState(() => _obscured = !_obscured),
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 16),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          child: Icon(
+                            _obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                            color: _isHovering ? AppColors.primary : AppColors.slate400,
+                            size: 22,
+                          ),
+                        ),
                       ),
                     ),
                   )
@@ -93,8 +103,9 @@ class _InputFieldState extends State<InputField> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppColors.primary, width: 2),
+              borderSide: const BorderSide(color: AppColors.primary, width: 2),
             ),
+            hoverColor: Colors.transparent,
           ),
         ),
       ],

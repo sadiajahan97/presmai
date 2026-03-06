@@ -216,10 +216,7 @@ class _ChatHistoryDrawerState extends State<ChatHistoryDrawer> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
+              _DeleteChatButton(
                 onPressed: () => _confirmDelete(context, chat['id']),
               ),
             ],
@@ -264,5 +261,39 @@ class _ChatHistoryDrawerState extends State<ChatHistoryDrawer> {
     }
   }
 }
+
+class _DeleteChatButton extends StatefulWidget {
+  final VoidCallback onPressed;
+  const _DeleteChatButton({required this.onPressed});
+
+  @override
+  State<_DeleteChatButton> createState() => _DeleteChatButtonState();
+}
+
+class _DeleteChatButtonState extends State<_DeleteChatButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: IconButton(
+        icon: Icon(
+          _isHovered ? Icons.delete : Icons.delete_outline,
+          size: 18,
+          color: Colors.redAccent,
+        ),
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
+        onPressed: widget.onPressed,
+        hoverColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        splashColor: Colors.transparent,
+      ),
+    );
+  }
+}
+
 
 

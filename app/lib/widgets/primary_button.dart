@@ -76,6 +76,7 @@ class PrimaryButton extends StatelessWidget {
                       style: GoogleFonts.manrope(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
+                        color: AppColors.white,
                       ),
                     ),
             ),

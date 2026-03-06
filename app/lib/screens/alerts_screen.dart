@@ -30,13 +30,9 @@ class _AlertsScreenState extends State<AlertsScreen> {
               ),
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: Icon(Icons.arrow_back, color: AppColors.slate900),
-                    ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.arrow_back, color: AppColors.slate900),
                   ),
                   Expanded(
                     child: Text(

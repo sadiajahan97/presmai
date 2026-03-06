@@ -21,6 +21,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   
   bool _termsAccepted = false;
   bool _isLoading = false;
+  bool _hoverTerms = false;
+  bool _hoverPrivacy = false;
+  bool _hoverSignIn = false;
 
   Future<void> _handleSignUp() async {
     final name = _nameController.text.trim();
@@ -88,14 +91,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                 child: Row(
                   children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false),
-                      child: Container(
-                        width: 48,
-                        height: 48,
-                        alignment: Alignment.center,
-                        child: const Icon(Icons.arrow_back, color: AppColors.slate900),
-                      ),
+                    IconButton(
+                      onPressed: () => Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false),
+                      icon: const Icon(Icons.arrow_back, color: AppColors.slate900),
                     ),
                     Expanded(
                       child: Text(
@@ -235,14 +233,52 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                               children: [
                                 const TextSpan(text: 'I agree to the '),
-                                const TextSpan(
-                                  text: 'Terms of Service',
-                                  style: TextStyle(color: AppColors.primary),
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.baseline,
+                                  baseline: TextBaseline.alphabetic,
+                                  child: MouseRegion(
+                                    onEnter: (_) => setState(() => _hoverTerms = true),
+                                    onExit: (_) => setState(() => _hoverTerms = false),
+                                    cursor: SystemMouseCursors.click,
+                                    child: GestureDetector(
+                                      onTap: () {},
+                                      child: Text(
+                                        'Terms of Service',
+                                        style: GoogleFonts.manrope(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.primary,
+                                          decoration: _hoverTerms ? TextDecoration.underline : TextDecoration.none,
+                                          decorationColor: AppColors.primary,
+                                          decorationThickness: 5.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 const TextSpan(text: ' and '),
-                                const TextSpan(
-                                  text: 'Privacy Policy',
-                                  style: TextStyle(color: AppColors.primary),
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.baseline,
+                                  baseline: TextBaseline.alphabetic,
+                                  child: MouseRegion(
+                                    onEnter: (_) => setState(() => _hoverPrivacy = true),
+                                    onExit: (_) => setState(() => _hoverPrivacy = false),
+                                    cursor: SystemMouseCursors.click,
+                                    child: GestureDetector(
+                                      onTap: () {},
+                                      child: Text(
+                                        'Privacy Policy',
+                                        style: GoogleFonts.manrope(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.primary,
+                                          decoration: _hoverPrivacy ? TextDecoration.underline : TextDecoration.none,
+                                          decorationColor: AppColors.primary,
+                                          decorationThickness: 5.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 const TextSpan(text: ', including HIPAA compliance standards.'),
                               ],
@@ -272,14 +308,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       'Already have an account? ',
                       style: GoogleFonts.manrope(fontSize: 14, color: AppColors.slate600),
                     ),
-                    GestureDetector(
-                      onTap: () => Navigator.pushReplacementNamed(context, '/signin'),
-                      child: Text(
-                        'Sign In',
-                        style: GoogleFonts.manrope(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
+                    MouseRegion(
+                      onEnter: (_) => setState(() => _hoverSignIn = true),
+                      onExit: (_) => setState(() => _hoverSignIn = false),
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () => Navigator.pushReplacementNamed(context, '/signin'),
+                        child: Text(
+                          'Sign In',
+                          style: GoogleFonts.manrope(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primary,
+                            decoration: _hoverSignIn ? TextDecoration.underline : TextDecoration.none,
+                            decorationColor: AppColors.primary,
+                            decorationThickness: 5.0,
+                          ),
                         ),
                       ),
                     ),

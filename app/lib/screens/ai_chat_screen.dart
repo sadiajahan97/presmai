@@ -165,6 +165,8 @@ class _AiChatScreenState extends State<AiChatScreen> {
             ChatInputBar(
               controller: _messageController,
               onSend: _handleSendMessage,
+              onCamera: () {},
+              onImage: () {},
             ),
 
             // Bottom nav

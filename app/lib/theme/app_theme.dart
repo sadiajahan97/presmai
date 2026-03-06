@@ -21,6 +21,11 @@ class AppTheme {
         bodyColor: AppColors.slate900,
         displayColor: AppColors.slate900,
       ),
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: AppColors.slate900,
+        selectionColor: AppColors.slate200,
+        selectionHandleColor: AppColors.slate900,
+      ),
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.backgroundLight,
         elevation: 0,
@@ -52,6 +57,7 @@ class AppTheme {
           color: AppColors.slate400,
           fontSize: 14,
         ),
+        hoverColor: Colors.transparent,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
