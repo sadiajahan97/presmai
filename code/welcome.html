@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13c8ec",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#101f22",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<title>PresMAI - AI Prescription Management</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<!-- Top Navigation / Logo -->
+<nav class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between max-w-7xl mx-auto w-full">
+<div class="flex items-center gap-2">
+<div class="text-primary flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10" data-icon="medical_services">
+<span class="material-symbols-outlined text-3xl">medical_services</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-extrabold leading-tight tracking-[-0.015em]">PresMAI</h2>
+</div>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Security</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Help</a>
+</div>
+</nav>
+<!-- Hero Section -->
+<main class="flex-1 flex flex-col items-center justify-center px-4 py-8 md:py-16">
+<div class="max-w-4xl w-full text-center">
+<div class="@container w-full mb-12">
+<div class="relative w-full max-w-2xl mx-auto aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10 shadow-xl flex items-center justify-center">
+<!-- Hero Image / Illustration Placeholder -->
+<div class="absolute inset-0 opacity-40 mix-blend-overlay bg-[url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&amp;fit=crop&amp;q=80&amp;w=1000')]" data-alt="Modern medical laboratory with high-tech equipment"></div>
+<div class="relative flex flex-col items-center space-y-6">
+<div class="bg-white/90 dark:bg-slate-800/90 p-6 rounded-full shadow-2xl backdrop-blur-sm border border-primary/20">
+<span class="material-symbols-outlined text-primary text-7xl md:text-8xl">smart_toy</span>
+</div>
+<div class="flex gap-4">
+<div class="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-lg border border-primary/10">
+<span class="material-symbols-outlined text-primary">pill</span>
+</div>
+<div class="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-lg border border-primary/10">
+<span class="material-symbols-outlined text-primary">description</span>
+</div>
+<div class="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-lg border border-primary/10">
+<span class="material-symbols-outlined text-primary">verified_user</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-primary/20 text-primary border border-primary/20">
+                        AI Healthcare Assistant
+                    </span>
+<h1 class="text-slate-900 dark:text-slate-100 tracking-tight text-4xl md:text-6xl font-extrabold leading-tight">
+                        Manage your prescriptions <br/>
+<span class="text-primary">with intelligent ease</span>
+</h1>
+<p class="text-slate-600 dark:text-slate-400 text-lg md:text-xl font-normal leading-relaxed max-w-2xl mx-auto">
+                        Your professional and secure AI healthcare companion. We simplify medication tracking, refill reminders, and dosage management.
+                    </p>
+</div>
+<!-- Call to Actions -->
+<div class="mt-12 flex flex-col sm:flex-row justify-center items-center gap-4 px-4">
+<button class="flex min-w-[180px] w-full sm:w-auto cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-8 bg-primary text-slate-900 text-lg font-bold leading-normal tracking-[0.015em] hover:brightness-105 transition-all shadow-lg shadow-primary/20">
+<span class="truncate">Get Started</span>
+</button>
+<button class="flex min-w-[180px] w-full sm:w-auto cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-8 bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-lg font-bold leading-normal tracking-[0.015em] hover:bg-slate-300 dark:hover:bg-slate-700 transition-all border border-slate-300 dark:border-slate-700">
+<span class="truncate">Sign In</span>
+</button>
+</div>
+<!-- Trust Badges -->
+<div class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-wrap justify-center gap-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined">security</span>
+<span class="text-sm font-semibold">HIPAA Compliant</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined">lock</span>
+<span class="text-sm font-semibold">End-to-End Encryption</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined">health_and_safety</span>
+<span class="text-sm font-semibold">Doctor Verified AI</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="p-8 text-center text-slate-500 dark:text-slate-500 text-sm">
+<p>© 2024 PresMAI. Your health data is always secure and private.</p>
+</footer>
+</div>
+</body></html>

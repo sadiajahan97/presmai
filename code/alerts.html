@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13c8ec",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#101f22",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>PresMAI Alerts</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
+<div class="relative flex h-screen w-full flex-col max-w-md mx-auto bg-background-light dark:bg-background-dark overflow-hidden">
+<header class="flex items-center bg-background-light dark:bg-background-dark p-4 border-b border-primary/10">
+<div class="text-slate-900 dark:text-slate-100 flex size-10 items-center justify-center cursor-pointer">
+<span class="material-symbols-outlined">arrow_back</span>
+</div>
+<h1 class="text-xl font-bold leading-tight tracking-tight flex-1 text-center pr-10">Alerts</h1>
+</header>
+<div class="flex border-b border-primary/10 bg-white/50 dark:bg-slate-900/50">
+<a class="flex-1 flex flex-col items-center justify-center border-b-2 border-primary text-primary pb-3 pt-4" href="#">
+<p class="text-sm font-bold">All</p>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center border-b-2 border-transparent text-slate-500 dark:text-slate-400 pb-3 pt-4" href="#">
+<p class="text-sm font-medium">Unread</p>
+</a>
+<a class="flex-1 flex flex-col items-center justify-center border-b-2 border-transparent text-slate-500 dark:text-slate-400 pb-3 pt-4" href="#">
+<p class="text-sm font-medium">Important</p>
+</a>
+</div>
+<div class="flex-1 overflow-y-auto pb-20">
+<section class="mt-4">
+<h3 class="text-primary text-xs font-bold uppercase tracking-wider px-4 pb-2">Refill Reminders</h3>
+<div class="space-y-1">
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900 px-4 py-4 border-y border-primary/5">
+<div class="flex items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 size-12">
+<span class="material-symbols-outlined">pill</span>
+</div>
+<div class="flex flex-col flex-1">
+<p class="text-base font-semibold line-clamp-1">Lipitor refill due in 2 days</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-normal">2 hours ago</p>
+</div>
+<div class="shrink-0">
+<button class="bg-primary text-white text-xs font-bold py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors">
+                                Request
+                            </button>
+</div>
+</div>
+</div>
+</section>
+<section class="mt-6">
+<h3 class="text-primary text-xs font-bold uppercase tracking-wider px-4 pb-2">Medication Alerts</h3>
+<div class="space-y-1">
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900 px-4 py-4 border-y border-primary/5">
+<div class="flex items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 size-12">
+<span class="material-symbols-outlined">alarm</span>
+</div>
+<div class="flex flex-col flex-1">
+<p class="text-base font-semibold line-clamp-1">Take Vitamin D now</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-normal">Just now</p>
+</div>
+<div class="shrink-0 flex gap-2">
+<button class="bg-primary/10 text-primary text-xs font-bold py-2 px-3 rounded-lg">
+                                Done
+                            </button>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900 px-4 py-4 border-b border-primary/5">
+<div class="flex items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 size-12">
+<span class="material-symbols-outlined">medication</span>
+</div>
+<div class="flex flex-col flex-1">
+<p class="text-base font-semibold line-clamp-1">Evening Metformin Dose</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-normal">In 45 minutes</p>
+</div>
+</div>
+</div>
+</section>
+<section class="mt-6">
+<h3 class="text-primary text-xs font-bold uppercase tracking-wider px-4 pb-2">System Updates</h3>
+<div class="space-y-1">
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900 px-4 py-4 border-y border-primary/5">
+<div class="flex items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 size-12">
+<span class="material-symbols-outlined">security</span>
+</div>
+<div class="flex flex-col flex-1">
+<p class="text-base font-semibold line-clamp-1">New login detected</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-normal">Yesterday, 10:45 PM</p>
+</div>
+<div class="shrink-0">
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-white dark:bg-slate-900 px-4 py-4 border-b border-primary/5">
+<div class="flex items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 size-12">
+<span class="material-symbols-outlined">update</span>
+</div>
+<div class="flex flex-col flex-1">
+<p class="text-base font-semibold line-clamp-1">PresMAI v2.4 Available</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-normal">2 days ago</p>
+</div>
+<div class="shrink-0">
+<button class="border border-primary text-primary text-xs font-bold py-2 px-3 rounded-lg hover:bg-primary/5">
+                                Update
+                            </button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<nav class="absolute bottom-0 left-0 right-0 flex gap-2 border-t border-primary/10 bg-white dark:bg-slate-950 px-4 pb-6 pt-3 shadow-lg">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">home</span>
+</div>
+<p class="text-[10px] font-bold uppercase">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">chat_bubble</span>
+</div>
+<p class="text-[10px] font-bold uppercase">Chat</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">notifications</span>
+</div>
+<p class="text-[10px] font-bold uppercase">Alerts</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">archive</span>
+</div>
+<p class="text-[10px] font-bold uppercase">Archive</p>
+</a>
+</nav>
+</div>
+</body></html>

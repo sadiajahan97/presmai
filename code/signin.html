@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13c8ec",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#101f22",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
+<div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<header class="flex items-center p-4">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100" data-icon="arrow_back">arrow_back</span>
+</button>
+</header>
+<main class="flex flex-col flex-1 px-6 pb-12 max-w-md mx-auto w-full">
+<div class="@container mb-8">
+<div class="@[480px]:px-0">
+<div class="w-full bg-center bg-no-repeat bg-cover flex flex-col justify-end overflow-hidden rounded-xl min-h-[220px] bg-primary/10 border border-primary/20" data-alt="Modern medical AI interface with glowing blue accents" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBlESySInsj2aiSYEzBkWQuk1AFB6wluHL5fnknjChbNfpnn5qtl-mhtVtYyC_jtfirg3R3ET5Jrj-j0LY8t7OI16onRclwEDkVCxG0qFUta1vDFJvekZ-R0AulPnecetLIcvZsAFE1QJcVKcVd9W_Dd_esAefZVT59wt_OYS-5o00Ns16kg64n5k7wRoYLfKwHERhRtHOgnq0n12BqemgHPg_hyZrUrayf9QgLR2PyuCv61fPQLiCoSjsc7qQHKRkfmDqV6u2u-CbK");'>
+</div>
+</div>
+</div>
+<div class="text-center mb-8">
+<h1 class="text-slate-900 dark:text-slate-100 tracking-tight text-[32px] font-bold leading-tight">Welcome Back</h1>
+<p class="text-slate-600 dark:text-slate-400 text-base font-normal mt-2">Sign in to manage your prescriptions</p>
+</div>
+<form class="space-y-5">
+<div class="flex flex-col gap-2">
+<label class="text-slate-900 dark:text-slate-100 text-sm font-semibold">Email Address</label>
+<input class="form-input flex w-full rounded-lg text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 focus:ring-2 focus:ring-primary focus:border-primary h-14 placeholder:text-slate-400 p-[15px] text-base font-normal" placeholder="name@example.com" type="email"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-slate-900 dark:text-slate-100 text-sm font-semibold">Password</label>
+<div class="relative">
+<input class="form-input flex w-full rounded-lg text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 focus:ring-2 focus:ring-primary focus:border-primary h-14 placeholder:text-slate-400 p-[15px] pr-12 text-base font-normal" placeholder="Enter your password" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary" type="button">
+<span class="material-symbols-outlined text-[22px]" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<div class="flex justify-end">
+<a class="text-sm font-semibold text-primary hover:underline" href="#">Forgot Password?</a>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-slate-900 font-bold py-4 rounded-lg shadow-lg shadow-primary/20 transition-all active:scale-[0.98]">
+                    Sign In
+                </button>
+</form>
+<div class="mt-8 text-center">
+<p class="text-slate-600 dark:text-slate-400 text-sm">
+                    Don't have an account? 
+                    <a class="text-primary font-bold hover:underline" href="#">Sign Up</a>
+</p>
+</div>
+<div class="mt-12 flex flex-col items-center gap-6">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="verified_user">verified_user</span>
+<span class="text-[11px] font-bold tracking-wider text-slate-500 dark:text-slate-400">HIPAA SECURE</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="lock">lock</span>
+<span class="text-[11px] font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">AES-256 Encrypted</span>
+</div>
+</div>
+<div class="flex items-center gap-2 text-slate-400">
+<span class="material-symbols-outlined text-[20px]" data-icon="smart_toy">smart_toy</span>
+<span class="text-xs font-medium italic">Powered by PresMAI Intelligence</span>
+</div>
+</div>
+</main>
+</div>
+</body></html>

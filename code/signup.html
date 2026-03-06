@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13c8ec",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#101f22",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col items-center">
+<div class="w-full max-w-[480px] min-h-screen flex flex-col bg-background-light dark:bg-background-dark shadow-sm">
+<!-- Top Navigation -->
+<div class="flex items-center p-4 pb-2 justify-between">
+<button class="text-slate-900 dark:text-slate-100 flex size-12 shrink-0 items-center justify-start">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">PresMAI</h2>
+</div>
+<!-- Hero Branding Area -->
+<div class="@container">
+<div class="@[480px]:px-4 @[480px]:py-3">
+<div class="w-full bg-center bg-no-repeat bg-cover flex flex-col justify-center items-center overflow-hidden bg-primary/10 @[480px]:rounded-lg min-h-[180px] relative" data-alt="Modern medical background with stethoscope and blue accents" style='background-image: linear-gradient(rgba(19, 200, 236, 0.1), rgba(19, 200, 236, 0.05)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuBH4cwx9dI70G5x7mbbX3NlgIr99c8O8jlb0fuI6RTzU3rLCGtIZ08_JugZOvjYjRNlF3GfIA15N_sUtxL0kinQeoDCK-xPg54pXuhkworci3aKCzbesJHbQZ_sB2ZB-wjOn_j-B5ggDjNFdqBW14jBomfjT6tNn0jDEF9AecgpBX1y4D-_q1aUdfXLIZlnNRpqUN-m1yt18dRS-8dqs4rF1tGdDBIRmLkWLWzleIoZoseSETPiLCtjfYOFuqHLGq0HuXjdUFD64WxF");'>
+<div class="bg-white/90 dark:bg-background-dark/90 p-4 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-primary text-4xl">health_metrics</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Header -->
+<div class="px-4 pt-8 pb-4">
+<h2 class="text-slate-900 dark:text-slate-100 tracking-tight text-[28px] font-bold leading-tight text-center">Create your account</h2>
+<p class="text-slate-500 dark:text-slate-400 text-center text-sm mt-2">Join PresMAI for smart prescription management</p>
+</div>
+<!-- Registration Form -->
+<form class="flex flex-col gap-4 px-4 py-3">
+<!-- Full Name -->
+<label class="flex flex-col w-full">
+<p class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal pb-2">Full Name</p>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">person</span>
+<input class="form-input flex w-full rounded-lg text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 h-14 pl-12 pr-4 placeholder:text-slate-400 text-base font-normal" placeholder="John Doe" required="" type="text"/>
+</div>
+</label>
+<!-- Email -->
+<label class="flex flex-col w-full">
+<p class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal pb-2">Email Address</p>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">mail</span>
+<input class="form-input flex w-full rounded-lg text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 h-14 pl-12 pr-4 placeholder:text-slate-400 text-base font-normal" placeholder="name@example.com" required="" type="email"/>
+</div>
+</label>
+<!-- Password -->
+<label class="flex flex-col w-full">
+<p class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal pb-2">Password</p>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">lock</span>
+<input class="form-input flex w-full rounded-lg text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 h-14 pl-12 pr-12 placeholder:text-slate-400 text-base font-normal" placeholder="Create a password" required="" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</label>
+<!-- Confirm Password -->
+<label class="flex flex-col w-full">
+<p class="text-slate-700 dark:text-slate-300 text-sm font-medium leading-normal pb-2">Confirm Password</p>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">lock_reset</span>
+<input class="form-input flex w-full rounded-lg text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 h-14 pl-12 pr-12 placeholder:text-slate-400 text-base font-normal" placeholder="Repeat password" required="" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</label>
+<!-- Terms -->
+<div class="flex items-start gap-3 py-2">
+<input class="mt-1 h-5 w-5 rounded border-slate-200 text-primary focus:ring-primary" id="terms" required="" type="checkbox"/>
+<label class="text-xs text-slate-500 dark:text-slate-400 leading-tight" for="terms">
+                    I agree to the <a class="text-primary hover:underline" href="#">Terms of Service</a> and <a class="text-primary hover:underline" href="#">Privacy Policy</a>, including HIPAA compliance standards.
+                </label>
+</div>
+<!-- Submit Button -->
+<button class="w-full h-14 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:opacity-90 active:scale-[0.98] transition-all mt-4" type="submit">
+                Sign Up
+            </button>
+</form>
+<!-- Footer Link -->
+<div class="mt-auto px-4 py-8 text-center">
+<p class="text-slate-600 dark:text-slate-400">
+                Already have an account? 
+                <a class="text-primary font-bold hover:underline ml-1" href="#">Sign In</a>
+</p>
+</div>
+<!-- Trust Badges -->
+<div class="flex justify-center items-center gap-6 pb-8 text-slate-400 dark:text-slate-600">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">verified_user</span>
+<span class="text-[10px] uppercase tracking-wider font-bold">HIPAA Secure</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">encrypted</span>
+<span class="text-[10px] uppercase tracking-wider font-bold">AES-256 Encrypted</span>
+</div>
+</div>
+</div>
+</body></html>
