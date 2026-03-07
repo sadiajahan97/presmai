@@ -1,8 +1,10 @@
+import os
 from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 load_dotenv()
 from prisma import Prisma
@@ -39,6 +41,9 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(chats_router)
+
+os.makedirs("storage", exist_ok=True)
+app.mount("/storage", StaticFiles(directory="storage"), name="storage")
 
 
 @app.get("/")

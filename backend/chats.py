@@ -28,7 +28,7 @@ class ChatResponse(BaseModel):
 class MessageResponse(BaseModel):
     id: str
     content: str | None
-    image: str | None
+    file_path: str | None
     role: str
     chatId: str
     createdAt: datetime
@@ -102,6 +102,9 @@ async def list_messages(
     messages = await db.message.find_many(
         where={"chatId": chat_id}, order={"createdAt": "asc"}
     )
+    for m in messages:
+        if m.file_path and not m.file_path.startswith("/"):
+            m.file_path = f"/{m.file_path}"
     return messages
 
 
@@ -122,19 +125,20 @@ async def send_message(
         storage_dir = os.path.join(os.getcwd(), "storage", user_id)
         os.makedirs(storage_dir, exist_ok=True)
 
-        ext = os.path.splitext(file.filename)[1] if file.filename else ""
-        filename = f"{uuid.uuid4()}{ext}"
-        abs_path = os.path.join(storage_dir, filename)
+        original_filename = file.filename if file.filename else "unknown"
+        filename = f"{uuid.uuid4()}_{original_filename}"
+        rel_path = f"storage/{user_id}/{filename}"
+        abs_path = os.path.join(os.getcwd(), rel_path)
         with open(abs_path, "wb") as f:
             f.write(await file.read())
 
-        file_path = abs_path
+        file_path = rel_path
 
     await db.message.create(
         data={
             "chatId": chat_id,
             "content": content,
-            "image": file_path,
+            "file_path": file_path,
             "role": "user",
         }
     )
@@ -144,7 +148,7 @@ async def send_message(
     )
 
     llm_messages = [
-        {"role": m.role, "content": m.content, "image": m.image} for m in history
+        {"role": m.role, "content": m.content, "file_path": m.file_path} for m in history
     ]
 
     assistant_content = await generate_response(llm_messages)

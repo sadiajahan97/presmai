@@ -8,6 +8,7 @@ import '../widgets/chat_bubble.dart';
 import '../widgets/chat_input_bar.dart';
 import '../widgets/chat_history_drawer.dart';
 import '../widgets/presmai_app_bar.dart';
+import '../widgets/typing_indicator.dart';
 import '../services/chat_service.dart';
 
 class AiChatScreen extends StatefulWidget {
@@ -21,11 +22,15 @@ class AiChatScreen extends StatefulWidget {
 class _AiChatScreenState extends State<AiChatScreen> {
   final ChatService _chatService = ChatService();
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();
   List<Map<String, dynamic>> _messages = [];
   bool _isLoading = false;
+  bool _isAiTyping = false;
   String? _currentChatId;
   String _chatTitle = 'PresMAI';
+
+  PlatformFile? _selectedFile;
 
   @override
   void initState() {
@@ -34,6 +39,23 @@ class _AiChatScreenState extends State<AiChatScreen> {
     if (_currentChatId != null) {
       _loadChatDetails();
       _loadMessages();
+    }
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
     }
   }
 
@@ -75,12 +97,13 @@ class _AiChatScreenState extends State<AiChatScreen> {
         _messages = messages;
         _isLoading = false;
       });
+      Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
     }
   }
 
-  Future<void> _handleSendMessage({String? filePath, List<int>? fileBytes, String? fileName}) async {
+  Future<void> _handleSendMessage() async {
     final text = _messageController.text.trim();
-    if (text.isEmpty && filePath == null && fileBytes == null) return;
+    if (text.isEmpty && _selectedFile == null) return;
 
     // If we don't have a chat ID yet, create one first
     if (_currentChatId == null) {
@@ -98,34 +121,46 @@ class _AiChatScreenState extends State<AiChatScreen> {
     }
 
     // Optimistic UI update
-    String displayContent = text;
-    if (displayContent.isEmpty) {
-      displayContent = 'Sent a file: ${fileName ?? (filePath != null ? filePath.split('/').last : 'file')}';
-    }
-
     final userMsg = {
       'role': 'user',
-      'content': displayContent,
+      'content': text,
+      'file_path': _selectedFile?.path ?? (_selectedFile?.bytes != null ? 'memory' : null),
       'createdAt': DateTime.now().toIso8601String(),
     };
 
+    final PlatformFile? fileToSend = _selectedFile;
+
     setState(() {
       _messages.add(userMsg);
-      if (text.isNotEmpty) _messageController.clear();
+      _messageController.clear();
+      _selectedFile = null;
+      _isAiTyping = true;
     });
+    
+    Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
 
     final result = await _chatService.sendMessage(
       _currentChatId!,
       text,
-      filePath: filePath,
-      fileBytes: fileBytes,
-      fileName: fileName,
+      filePath: fileToSend?.path,
+      fileBytes: fileToSend?.bytes,
+      fileName: fileToSend?.name,
     );
 
     if (result['success']) {
-      _loadMessages();
+      final messages = await _chatService.listMessages(_currentChatId!);
+      if (mounted) {
+        setState(() {
+          _messages = messages;
+          _isAiTyping = false;
+        });
+        Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
+      }
     } else {
       if (mounted) {
+        setState(() {
+          _isAiTyping = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(result['message'] ?? 'Failed to send message')),
         );
@@ -137,7 +172,14 @@ class _AiChatScreenState extends State<AiChatScreen> {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null) {
       final bytes = await photo.readAsBytes();
-      _handleSendMessage(fileBytes: bytes, fileName: photo.name);
+      setState(() {
+        _selectedFile = PlatformFile(
+          name: photo.name,
+          size: bytes.length,
+          bytes: bytes,
+          path: photo.path,
+        );
+      });
     }
   }
 
@@ -145,22 +187,23 @@ class _AiChatScreenState extends State<AiChatScreen> {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       final bytes = await image.readAsBytes();
-      _handleSendMessage(fileBytes: bytes, fileName: image.name);
+      setState(() {
+        _selectedFile = PlatformFile(
+          name: image.name,
+          size: bytes.length,
+          bytes: bytes,
+          path: image.path,
+        );
+      });
     }
   }
 
   Future<void> _handleFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(withData: true);
-    if (result != null && result.files.single.bytes != null) {
-      _handleSendMessage(
-        fileBytes: result.files.single.bytes,
-        fileName: result.files.single.name,
-      );
-    } else if (result != null && result.files.single.path != null) {
-      _handleSendMessage(
-        filePath: result.files.single.path,
-        fileName: result.files.single.name,
-      );
+    if (result != null) {
+      setState(() {
+        _selectedFile = result.files.single;
+      });
     }
   }
 
@@ -190,15 +233,23 @@ class _AiChatScreenState extends State<AiChatScreen> {
                   : _messages.isEmpty
                       ? _buildWelcomeState()
                       : ListView.builder(
+                          controller: _scrollController,
                           padding: const EdgeInsets.all(16),
-                          itemCount: _messages.length,
+                          itemCount: _messages.length + (_isAiTyping ? 1 : 0),
                           itemBuilder: (context, index) {
+                            if (index == _messages.length) {
+                              return const Padding(
+                                padding: EdgeInsets.only(bottom: 16),
+                                child: TypingIndicator(),
+                              );
+                            }
                             final msg = _messages[index];
                             return Column(
                               children: [
                                 ChatBubble(
                                   isUser: msg['role'] == 'user',
                                   message: msg['content'] ?? '',
+                                  filePath: msg['file_path'],
                                 ),
                                 const SizedBox(height: 16),
                               ],
@@ -210,11 +261,14 @@ class _AiChatScreenState extends State<AiChatScreen> {
             // Input bar
             ChatInputBar(
               controller: _messageController,
-              onSend: () => _handleSendMessage(),
+              onSend: _handleSendMessage,
               onCamera: _handleCamera,
               onImage: _handleImage,
               onFile: _handleFile,
+              selectedFile: _selectedFile,
+              onRemoveFile: () => setState(() => _selectedFile = null),
             ),
+
 
             // Bottom nav
             BottomNavBar(
