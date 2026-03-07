@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuthService {
   // Use 10.0.2.2 for Android emulator to access localhost, or a specific IP for real devices.
-  // For simplicity, we'll use a configurable base URL.
-  static const String baseUrl = 'http://localhost:8000/auth';
+  static final String baseUrl = '${dotenv.get('API_URL', fallback: 'http://localhost:8000')}/auth';
 
   Future<Map<String, dynamic>> signUp(String email, String password, String name) async {
     try {

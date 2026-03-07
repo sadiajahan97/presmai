@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'theme/app_theme.dart';
 import 'screens/welcome_screen.dart';
 import 'screens/sign_in_screen.dart';
@@ -7,7 +8,9 @@ import 'screens/ai_chat_screen.dart';
 import 'screens/alerts_screen.dart';
 import 'screens/archive_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   runApp(const PresMAIApp());
 }
 

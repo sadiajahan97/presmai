@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 import '../theme/app_colors.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/chat_bubble.dart';
@@ -18,6 +21,7 @@ class AiChatScreen extends StatefulWidget {
 class _AiChatScreenState extends State<AiChatScreen> {
   final ChatService _chatService = ChatService();
   final TextEditingController _messageController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
   List<Map<String, dynamic>> _messages = [];
   bool _isLoading = false;
   String? _currentChatId;
@@ -74,16 +78,17 @@ class _AiChatScreenState extends State<AiChatScreen> {
     }
   }
 
-  Future<void> _handleSendMessage() async {
+  Future<void> _handleSendMessage({String? filePath, List<int>? fileBytes, String? fileName}) async {
     final text = _messageController.text.trim();
-    if (text.isEmpty) return;
+    if (text.isEmpty && filePath == null && fileBytes == null) return;
 
     // If we don't have a chat ID yet, create one first
     if (_currentChatId == null) {
-      final chatResult = await _chatService.createChat(name: text.length > 20 ? text.substring(0, 20) : text);
+      String chatName = text.isNotEmpty ? (text.length > 20 ? text.substring(0, 20) : text) : "File Upload";
+      final chatResult = await _chatService.createChat(name: chatName);
       if (chatResult['success']) {
         _currentChatId = chatResult['chat']['id'];
-        _chatTitle = chatResult['chat']['name'] ?? text;
+        _chatTitle = chatResult['chat']['name'] ?? chatName;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to start chat')),
@@ -92,22 +97,32 @@ class _AiChatScreenState extends State<AiChatScreen> {
       }
     }
 
-    // Optimistic UI update (add user message immediately)
+    // Optimistic UI update
+    String displayContent = text;
+    if (displayContent.isEmpty) {
+      displayContent = 'Sent a file: ${fileName ?? (filePath != null ? filePath.split('/').last : 'file')}';
+    }
+
     final userMsg = {
       'role': 'user',
-      'content': text,
+      'content': displayContent,
       'createdAt': DateTime.now().toIso8601String(),
     };
 
     setState(() {
       _messages.add(userMsg);
-      _messageController.clear();
+      if (text.isNotEmpty) _messageController.clear();
     });
 
-    final result = await _chatService.sendMessage(_currentChatId!, text);
+    final result = await _chatService.sendMessage(
+      _currentChatId!,
+      text,
+      filePath: filePath,
+      fileBytes: fileBytes,
+      fileName: fileName,
+    );
 
     if (result['success']) {
-      // Refresh to get assistant message properly
       _loadMessages();
     } else {
       if (mounted) {
@@ -115,6 +130,37 @@ class _AiChatScreenState extends State<AiChatScreen> {
           SnackBar(content: Text(result['message'] ?? 'Failed to send message')),
         );
       }
+    }
+  }
+
+  Future<void> _handleCamera() async {
+    final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+    if (photo != null) {
+      final bytes = await photo.readAsBytes();
+      _handleSendMessage(fileBytes: bytes, fileName: photo.name);
+    }
+  }
+
+  Future<void> _handleImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      _handleSendMessage(fileBytes: bytes, fileName: image.name);
+    }
+  }
+
+  Future<void> _handleFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(withData: true);
+    if (result != null && result.files.single.bytes != null) {
+      _handleSendMessage(
+        fileBytes: result.files.single.bytes,
+        fileName: result.files.single.name,
+      );
+    } else if (result != null && result.files.single.path != null) {
+      _handleSendMessage(
+        filePath: result.files.single.path,
+        fileName: result.files.single.name,
+      );
     }
   }
 
@@ -164,9 +210,10 @@ class _AiChatScreenState extends State<AiChatScreen> {
             // Input bar
             ChatInputBar(
               controller: _messageController,
-              onSend: _handleSendMessage,
-              onCamera: () {},
-              onImage: () {},
+              onSend: () => _handleSendMessage(),
+              onCamera: _handleCamera,
+              onImage: _handleImage,
+              onFile: _handleFile,
             ),
 
             // Bottom nav

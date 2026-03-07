@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'auth_service.dart';
 
 class ChatService {
-  static const String baseUrl = 'http://localhost:8000/chats';
+  static final String baseUrl = '${dotenv.get('API_URL', fallback: 'http://localhost:8000')}/chats';
   final AuthService _authService = AuthService();
 
   Future<Map<String, dynamic>> createChat({String name = "New Chat"}) async {
@@ -118,7 +119,13 @@ class ChatService {
     }
   }
 
-  Future<Map<String, dynamic>> sendMessage(String chatId, String content, {String? filePath}) async {
+  Future<Map<String, dynamic>> sendMessage(
+    String chatId,
+    String content, {
+    String? filePath,
+    List<int>? fileBytes,
+    String? fileName,
+  }) async {
     try {
       final token = await _authService.getToken();
       if (token == null) return {'success': false, 'message': 'Not authenticated'};
@@ -127,7 +134,13 @@ class ChatService {
       request.headers['Authorization'] = 'Bearer $token';
       request.fields['content'] = content;
 
-      if (filePath != null) {
+      if (fileBytes != null && fileName != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          'file',
+          fileBytes,
+          filename: fileName,
+        ));
+      } else if (filePath != null) {
         request.files.add(await http.MultipartFile.fromPath('file', filePath));
       }
 

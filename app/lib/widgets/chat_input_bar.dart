@@ -7,6 +7,7 @@ class ChatInputBar extends StatelessWidget {
   final VoidCallback? onSend;
   final VoidCallback? onCamera;
   final VoidCallback? onImage;
+  final VoidCallback? onFile;
 
   const ChatInputBar({
     super.key,
@@ -14,6 +15,7 @@ class ChatInputBar extends StatelessWidget {
     this.onSend,
     this.onCamera,
     this.onImage,
+    this.onFile,
   });
 
   @override
@@ -27,25 +29,37 @@ class ChatInputBar extends StatelessWidget {
       child: Row(
         children: [
           // Camera & Image buttons
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.slate200),
+          Theme(
+            data: Theme.of(context).copyWith(
+              hoverColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _HoverIconButton(
-                  onPressed: onCamera,
-                  icon: Icons.photo_camera_outlined,
-                ),
-                _HoverIconButton(
-                  onPressed: onImage,
-                  icon: Icons.image_outlined,
-                ),
+            child: PopupMenuButton<String>(
+              offset: const Offset(0, -170),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              color: AppColors.white,
+              elevation: 4,
+              shadowColor: AppColors.slate200.withOpacity(0.5),
+              itemBuilder: (context) => [
+                _buildPopupItem(Icons.photo_camera_outlined, 'Camera', 'camera'),
+                _buildPopupItem(Icons.image_outlined, 'Photos', 'photos'),
+                _buildPopupItem(Icons.attach_file_outlined, 'Files', 'files'),
               ],
+              onSelected: (value) {
+                if (value == 'camera') onCamera?.call();
+                if (value == 'photos') onImage?.call();
+                if (value == 'files') onFile?.call();
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.slate200),
+                ),
+                padding: const EdgeInsets.all(8),
+                child: const Icon(Icons.add, color: AppColors.slate500, size: 24),
+              ),
             ),
           ),
           const SizedBox(width: 8),
@@ -106,6 +120,28 @@ class ChatInputBar extends StatelessWidget {
               onPressed: onSend,
               icon: const Icon(Icons.send, color: AppColors.white),
               padding: EdgeInsets.zero,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  PopupMenuItem<String> _buildPopupItem(IconData icon, String text, String value) {
+    return PopupMenuItem<String>(
+      value: value,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 20, color: AppColors.slate500),
+          const SizedBox(width: 12),
+          Text(
+            text,
+            style: GoogleFonts.manrope(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.slate900,
             ),
           ),
         ],
