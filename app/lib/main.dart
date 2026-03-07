@@ -7,6 +7,7 @@ import 'screens/sign_up_screen.dart';
 import 'screens/ai_chat_screen.dart';
 import 'screens/alerts_screen.dart';
 import 'screens/archive_screen.dart';
+import 'screens/profile_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ class PresMAIApp extends StatelessWidget {
         '/chat': (context) => const AiChatScreen(),
         '/alerts': (context) => const AlertsScreen(),
         '/archive': (context) => const ArchiveScreen(),
+        '/profile': (context) => const ProfileScreen(),
       },
     );
   }

@@ -28,7 +28,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
   bool _isLoading = false;
   bool _isAiTyping = false;
   String? _currentChatId;
-  String _chatTitle = 'PresMAI';
+  String _chatTitle = 'Chat';
 
   PlatformFile? _selectedFile;
 
@@ -70,7 +70,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
       } else {
         setState(() {
           _messages = [];
-          _chatTitle = 'PresMAI';
+          _chatTitle = 'Chat';
         });
       }
     }
@@ -81,7 +81,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
     final chat = await _chatService.getChat(_currentChatId!);
     if (mounted && chat != null) {
       setState(() {
-        _chatTitle = chat['name'] ?? 'PresMAI';
+        _chatTitle = chat['name'] ?? 'Chat';
       });
     }
   }
@@ -283,48 +283,47 @@ class _AiChatScreenState extends State<AiChatScreen> {
 
   Widget _buildWelcomeState() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.smart_toy, color: AppColors.primary, size: 48),
             ),
-            child: const Icon(Icons.smart_toy, color: AppColors.primary, size: 48),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'How can I help you today?',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: AppColors.slate900,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 40),
-            child: Text(
-              'I can help with medication refills, dosage tracking, or general health questions.',
-              textAlign: TextAlign.center,
+            const SizedBox(height: 24),
+            const Text(
+              'How can I help you today?',
               style: TextStyle(
-                fontSize: 14,
-                color: AppColors.slate500,
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: AppColors.slate900,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 40),
+              child: Text(
+                'I can help with medication refills, dosage tracking, or general health questions.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.slate500,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   void _navigateToTab(BuildContext context, NavTab tab) {
     switch (tab) {
-      case NavTab.home:
-        Navigator.pushReplacementNamed(context, '/welcome');
-        break;
       case NavTab.chat:
         break; // already here
       case NavTab.alerts:
@@ -332,6 +331,9 @@ class _AiChatScreenState extends State<AiChatScreen> {
         break;
       case NavTab.archive:
         Navigator.pushReplacementNamed(context, '/archive');
+        break;
+      case NavTab.profile:
+        Navigator.pushReplacementNamed(context, '/profile');
         break;
     }
   }

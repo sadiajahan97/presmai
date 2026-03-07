@@ -11,6 +11,7 @@ from prisma import Prisma
 
 from auth import router as auth_router
 from chats import router as chats_router
+from profile import router as profile_router
 from db import set_db
 
 prisma = Prisma()
@@ -41,6 +42,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(chats_router)
+app.include_router(profile_router)
 
 os.makedirs("storage", exist_ok=True)
 app.mount("/storage", StaticFiles(directory="storage"), name="storage")

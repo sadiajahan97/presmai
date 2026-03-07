@@ -51,7 +51,7 @@ class ChatInputBar extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   color: AppColors.white,
                   elevation: 4,
-                  shadowColor: AppColors.slate200.withOpacity(0.5),
+                  shadowColor: AppColors.slate200.withValues(alpha: 0.5),
                   itemBuilder: (context) => [
                     _buildPopupItem(Icons.photo_camera_outlined, 'Camera', 'camera'),
                     _buildPopupItem(Icons.image_outlined, 'Photos', 'photos'),
@@ -62,15 +62,7 @@ class ChatInputBar extends StatelessWidget {
                     if (value == 'photos') onImage?.call();
                     if (value == 'files') onFile?.call();
                   },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.slate200),
-                    ),
-                    padding: const EdgeInsets.all(8),
-                    child: const Icon(Icons.add, color: AppColors.slate500, size: 24),
-                  ),
+                  child: const _HoverAddButton(),
                 ),
               ),
               const SizedBox(width: 8),
@@ -207,21 +199,89 @@ class ChatInputBar extends StatelessWidget {
   PopupMenuItem<String> _buildPopupItem(IconData icon, String text, String value) {
     return PopupMenuItem<String>(
       value: value,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 20, color: AppColors.slate500),
-          const SizedBox(width: 12),
-          Text(
-            text,
-            style: GoogleFonts.manrope(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: AppColors.slate900,
+      padding: EdgeInsets.zero,
+      child: _HoverPopupItem(icon: icon, text: text),
+    );
+  }
+}
+
+class _HoverPopupItem extends StatefulWidget {
+  final IconData icon;
+  final String text;
+
+  const _HoverPopupItem({super.key, required this.icon, required this.text});
+
+  @override
+  State<_HoverPopupItem> createState() => _HoverPopupItemState();
+}
+
+class _HoverPopupItemState extends State<_HoverPopupItem> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: _isHovered ? AppColors.slate50 : Colors.transparent,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              widget.icon,
+              size: 20,
+              color: _isHovered ? AppColors.primary : AppColors.slate500,
             ),
+            const SizedBox(width: 12),
+            Text(
+              widget.text,
+              style: GoogleFonts.manrope(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: _isHovered ? AppColors.primary : AppColors.slate900,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HoverAddButton extends StatefulWidget {
+  const _HoverAddButton({super.key});
+
+  @override
+  State<_HoverAddButton> createState() => _HoverAddButtonState();
+}
+
+class _HoverAddButtonState extends State<_HoverAddButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: _isHovered ? AppColors.primary : AppColors.slate200,
+            width: _isHovered ? 2 : 1,
           ),
-        ],
+        ),
+        padding: _isHovered ? const EdgeInsets.all(7) : const EdgeInsets.all(8),
+        child: Icon(
+          Icons.add,
+          color: _isHovered ? AppColors.primary : AppColors.slate500,
+          size: 24,
+        ),
       ),
     );
   }

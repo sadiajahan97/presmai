@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_colors.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/folder_tile.dart';
+import '../widgets/presmai_app_bar.dart';
 
 class ArchiveScreen extends StatelessWidget {
   const ArchiveScreen({super.key});
@@ -14,44 +15,8 @@ class ArchiveScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.backgroundLight.withValues(alpha: 0.8),
-                border: Border(bottom: BorderSide(color: AppColors.primary.withValues(alpha: 0.1))),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryLight.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(Icons.medical_services, color: AppColors.primary, size: 24),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Archive',
-                    style: GoogleFonts.manrope(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.slate900,
-                      letterSpacing: -0.3,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.search, color: AppColors.slate900),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.more_vert, color: AppColors.slate900),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
+            const PresmaiAppBar(
+              title: 'Archive',
             ),
 
             // Content
@@ -231,9 +196,6 @@ class ArchiveScreen extends StatelessWidget {
 
   void _navigateToTab(BuildContext context, NavTab tab) {
     switch (tab) {
-      case NavTab.home:
-        Navigator.pushReplacementNamed(context, '/welcome');
-        break;
       case NavTab.chat:
         Navigator.pushReplacementNamed(context, '/chat');
         break;
@@ -241,6 +203,9 @@ class ArchiveScreen extends StatelessWidget {
         Navigator.pushReplacementNamed(context, '/alerts');
         break;
       case NavTab.archive:
+        break;
+      case NavTab.profile:
+        Navigator.pushReplacementNamed(context, '/profile');
         break;
     }
   }

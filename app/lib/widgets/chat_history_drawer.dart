@@ -85,11 +85,12 @@ class _ChatHistoryDrawerState extends State<ChatHistoryDrawer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'PresMAI',
+                    'History',
                     style: GoogleFonts.manrope(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
                       color: AppColors.slate900,
+                      letterSpacing: -0.3,
                     ),
                   ),
                   IconButton(

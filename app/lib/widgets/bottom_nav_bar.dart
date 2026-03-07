@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-enum NavTab { home, chat, alerts, archive }
+enum NavTab { chat, alerts, archive, profile }
 
 class BottomNavBar extends StatelessWidget {
   final NavTab currentTab;
@@ -41,27 +41,27 @@ class BottomNavBar extends StatelessWidget {
 
   IconData _iconForTab(NavTab tab) {
     switch (tab) {
-      case NavTab.home:
-        return Icons.home_outlined;
       case NavTab.chat:
         return Icons.chat_bubble_outline;
       case NavTab.alerts:
         return Icons.notifications_outlined;
       case NavTab.archive:
         return Icons.inventory_2_outlined;
+      case NavTab.profile:
+        return Icons.person_outline;
     }
   }
 
   String _labelForTab(NavTab tab) {
     switch (tab) {
-      case NavTab.home:
-        return 'Home';
       case NavTab.chat:
         return 'Chat';
       case NavTab.alerts:
         return 'Alerts';
       case NavTab.archive:
         return 'Archive';
+      case NavTab.profile:
+        return 'Profile';
     }
   }
 }
@@ -117,14 +117,14 @@ class _NavItem extends StatelessWidget {
 
   IconData get _filledIcon {
     switch (label) {
-      case 'Home':
-        return Icons.home;
       case 'Chat':
         return Icons.chat_bubble;
       case 'Alerts':
         return Icons.notifications;
       case 'Archive':
         return Icons.archive;
+      case 'Profile':
+        return Icons.person;
       default:
         return icon;
     }

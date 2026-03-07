@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_colors.dart';
 import '../widgets/alert_tile.dart';
 import '../widgets/bottom_nav_bar.dart';
+import '../widgets/presmai_app_bar.dart';
 
 class AlertsScreen extends StatefulWidget {
   const AlertsScreen({super.key});
@@ -21,34 +22,8 @@ class _AlertsScreenState extends State<AlertsScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.backgroundLight,
-                border: Border(bottom: BorderSide(color: AppColors.primary.withValues(alpha: 0.1))),
-              ),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.arrow_back, color: AppColors.slate900),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Alerts',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.manrope(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.slate900,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 40), // balance
-                ],
-              ),
+            const PresmaiAppBar(
+              title: 'Alerts',
             ),
 
             // Tab bar
@@ -178,9 +153,6 @@ class _AlertsScreenState extends State<AlertsScreen> {
 
   void _navigateToTab(BuildContext context, NavTab tab) {
     switch (tab) {
-      case NavTab.home:
-        Navigator.pushReplacementNamed(context, '/welcome');
-        break;
       case NavTab.chat:
         Navigator.pushReplacementNamed(context, '/chat');
         break;
@@ -188,6 +160,9 @@ class _AlertsScreenState extends State<AlertsScreen> {
         break;
       case NavTab.archive:
         Navigator.pushReplacementNamed(context, '/archive');
+        break;
+      case NavTab.profile:
+        Navigator.pushReplacementNamed(context, '/profile');
         break;
     }
   }

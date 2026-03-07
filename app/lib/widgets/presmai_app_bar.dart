@@ -21,47 +21,57 @@ class PresmaiAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Size get preferredSize => const Size.fromHeight(56);
+  Size get preferredSize => const Size.fromHeight(64);
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 64,
       decoration: BoxDecoration(
         color: backgroundColor ?? AppColors.white,
         border: showBorder
             ? Border(bottom: BorderSide(color: AppColors.slate100, width: 1))
             : null,
       ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 48,
-                child: leading ?? const SizedBox.shrink(),
-              ),
-              Expanded(
-                child: Text(
-                  title,
-                  textAlign: centerTitle ? TextAlign.center : TextAlign.start,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: GoogleFonts.manrope(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.slate900,
-                    letterSpacing: -0.3,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Row(
+          children: [
+            Container(
+              constraints: const BoxConstraints(minWidth: 48),
+              child: leading ?? const SizedBox.shrink(),
+            ),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: centerTitle
+                    ? MainAxisAlignment.center
+                    : MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      title,
+                      textAlign:
+                          centerTitle ? TextAlign.center : TextAlign.start,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: GoogleFonts.manrope(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.slate900,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-              SizedBox(
-                width: 48,
-                child: trailing ?? const SizedBox.shrink(),
-              ),
-            ],
-          ),
+            ),
+            Container(
+              constraints: const BoxConstraints(minWidth: 48),
+              alignment: Alignment.centerRight,
+              child: trailing ?? const SizedBox.shrink(),
+            ),
+          ],
         ),
       ),
     );
