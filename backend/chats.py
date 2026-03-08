@@ -161,7 +161,23 @@ async def send_message(
                 context_parts.append(f"--- Medication {i} ---\n{doc}")
             medication_context = "\n\n".join(context_parts)
 
-    assistant_content = await generate_response(llm_messages, medication_context=medication_context)
+    assistant_response = await generate_response(llm_messages, medication_context=medication_context)
+
+    assistant_content = assistant_response.get("answer", "")
+    medications = assistant_response.get("medications", [])
+
+    for med in medications:
+        await db.medication.create(
+            data={
+                "name": med.get("name", ""),
+                "strength": med.get("strength"),
+                "morning": med.get("morning", False),
+                "afternoon": med.get("afternoon", False),
+                "night": med.get("night", False),
+                "days": med.get("days", 0),
+                "userId": user_id,
+            }
+        )
 
     assistant_msg = await db.message.create(
         data={

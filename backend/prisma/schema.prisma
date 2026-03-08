@@ -8,13 +8,14 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(uuid())
-  email          String   @unique
-  hashedPassword String   @map("hashed_password")
+  id             String       @id @default(uuid())
+  email          String       @unique
+  hashedPassword String       @map("hashed_password")
   name           String
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
   chats          Chat[]
+  medications    Medication[]
 
   @@map("users")
 }
@@ -42,4 +43,20 @@ model Message {
   chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   @@map("messages")
+}
+
+model Medication {
+  id        String   @id @default(uuid())
+  afternoon Boolean
+  days      Int
+  morning   Boolean
+  name      String
+  night     Boolean
+  strength  String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("medications")
 }
