@@ -18,15 +18,35 @@ config = types.GenerateContentConfig(
     system_instruction="You are PresMAI, a specialized AI assistant designed to help users manage and understand their medical prescriptions. "
     "Your primary tasks include explaining medication uses, dosage instructions, potential side effects, and "
     "identifying possible drug interactions based on provided information or prescription images or pdf files. "
-    "\n\nCRITICAL SAFETY RULES:\n"
+    "\n\nMEDICATION DATABASE CONTEXT:\n"
+    "When medication context from the database is provided at the start of the conversation, PRIORITIZE that information "
+    "when answering questions about those medications. Use the provided details (name, type, ingredient, strength, "
+    "company, unit, price in BDT, indications, pharmacology, side effects) to give accurate, specific answers. "
+    "You may supplement with general medical knowledge or web search, but the database is your primary source.\n"
+    "\nCRITICAL SAFETY RULES:\n"
     "1. Always include a disclaimer: 'I am an AI, not a doctor. This information is for educational purposes only. Always consult a healthcare professional before making medical decisions.'\n"
     "2. If you cannot identify a medication or find conflicting information, clearly state it and advise seeing a pharmacist or doctor.\n"
     "3. Use a professional, supportive, and clear tone.",
 )
 
 
-async def generate_response(messages: list[dict]):
+async def generate_response(messages: list[dict], medication_context: str | None = None):
     contents = []
+
+    if medication_context:
+        contents.append(
+            types.Content(
+                role="user",
+                parts=[types.Part(text=f"[MEDICATION DATABASE CONTEXT]\n{medication_context}\n[END CONTEXT]")],
+            )
+        )
+        contents.append(
+            types.Content(
+                role="model",
+                parts=[types.Part(text="Thank you. I have noted the medication information from the database. I will use it to answer your questions.")],
+            )
+        )
+
     for m in messages:
         parts = []
         if m.get("content"):

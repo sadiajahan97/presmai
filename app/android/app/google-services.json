@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "569420520796",
+    "project_id": "presmai",
+    "storage_bucket": "presmai.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569420520796:android:a6f5117cfdc833e343f599",
+        "android_client_info": {
+          "package_name": "com.presmai.presmai_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGQ2eKY7UV3wAM7ZdHyFHDC9RViB591vg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

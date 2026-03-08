@@ -10,6 +10,7 @@ from prisma import Prisma
 from auth import verify_access_token
 from db import get_db
 from llm import generate_response
+from vector_db import query_medications
 
 router = APIRouter(prefix="/chats", tags=["chats"])
 
@@ -151,7 +152,16 @@ async def send_message(
         {"role": m.role, "content": m.content, "file_path": m.file_path} for m in history
     ]
 
-    assistant_content = await generate_response(llm_messages)
+    medication_context = None
+    if content:
+        med_results = query_medications(content, n_results=5)
+        if med_results:
+            context_parts = []
+            for i, (doc, meta) in enumerate(med_results, 1):
+                context_parts.append(f"--- Medication {i} ---\n{doc}")
+            medication_context = "\n\n".join(context_parts)
+
+    assistant_content = await generate_response(llm_messages, medication_context=medication_context)
 
     assistant_msg = await db.message.create(
         data={

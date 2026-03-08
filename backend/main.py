@@ -13,6 +13,7 @@ from auth import router as auth_router
 from chats import router as chats_router
 from profile import router as profile_router
 from db import set_db
+from vector_db import init_chroma
 
 prisma = Prisma()
 
@@ -21,6 +22,7 @@ prisma = Prisma()
 async def lifespan(app: FastAPI):
     await prisma.connect()
     set_db(prisma)
+    init_chroma()
     yield
     await prisma.disconnect()
 
