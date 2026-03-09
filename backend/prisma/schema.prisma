@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id             String       @id @default(uuid())
-  email          String       @unique
-  hashedPassword String       @map("hashed_password")
+  id             String         @id @default(uuid())
+  email          String         @unique
+  hashedPassword String         @map("hashed_password")
   name           String
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @updatedAt @map("updated_at")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
   chats          Chat[]
   medications    Medication[]
+  Notification   Notification[]
 
   @@map("users")
 }
@@ -59,4 +60,15 @@ model Medication {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("medications")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
 }
