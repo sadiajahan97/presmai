@@ -14,7 +14,7 @@ from auth import router as auth_router
 from chats import router as chats_router
 from profile import router as profile_router
 from db import set_db
-from notifications import notification_loop
+from notifications import notification_loop, router as notifications_router
 from vector_db import init_chroma
 import firebase_admin
 from firebase_admin import credentials
@@ -61,6 +61,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(chats_router)
 app.include_router(profile_router)
+app.include_router(notifications_router)
 
 os.makedirs("storage", exist_ok=True)
 app.mount("/storage", StaticFiles(directory="storage"), name="storage")

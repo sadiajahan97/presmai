@@ -47,8 +47,6 @@ class AlertTile extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.manrope(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

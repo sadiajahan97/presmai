@@ -1,12 +1,42 @@
 import asyncio
 import logging
 from datetime import datetime, time, timedelta
+from typing import List
 
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 from firebase_admin import messaging
 
+from prisma import Prisma
+from auth import verify_access_token
 from db import get_db
 
 logger = logging.getLogger(__name__)
+
+router = APIRouter(prefix="/notifications", tags=["notifications"])
+
+
+class NotificationResponse(BaseModel):
+    id: str
+    content: str
+    userId: str
+    createdAt: datetime
+    updatedAt: datetime
+
+    class Config:
+        from_attributes = True
+
+
+@router.get("/", response_model=List[NotificationResponse])
+async def get_notifications(
+    user_id: str = Depends(verify_access_token),
+    db: Prisma = Depends(get_db),
+):
+    notifications = await db.notification.find_many(
+        where={"userId": user_id},
+        order={"createdAt": "desc"},
+    )
+    return notifications
 
 
 async def _send_push_notification(user_id: str, content: str) -> None:

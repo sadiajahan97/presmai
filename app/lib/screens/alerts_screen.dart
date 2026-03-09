@@ -4,6 +4,7 @@ import '../theme/app_colors.dart';
 import '../widgets/alert_tile.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/presmai_app_bar.dart';
+import '../services/notification_service.dart';
 
 class AlertsScreen extends StatefulWidget {
   const AlertsScreen({super.key});
@@ -13,7 +14,44 @@ class AlertsScreen extends StatefulWidget {
 }
 
 class _AlertsScreenState extends State<AlertsScreen> {
-  int _selectedTabIndex = 0;
+  final NotificationService _notificationService = NotificationService();
+  List<Map<String, dynamic>> _notifications = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchNotifications();
+  }
+
+  Future<void> _fetchNotifications() async {
+    setState(() => _isLoading = true);
+    final notifications = await _notificationService.getNotifications();
+    setState(() {
+      _notifications = notifications;
+      _isLoading = false;
+    });
+  }
+
+  String _formatDateTime(String createdAt) {
+    try {
+      final dateTime = DateTime.parse(createdAt).toLocal();
+      final months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      final month = months[dateTime.month - 1];
+      final day = dateTime.day;
+      final year = dateTime.year;
+      final hour = dateTime.hour > 12 ? dateTime.hour - 12 : (dateTime.hour == 0 ? 12 : dateTime.hour);
+      final minute = dateTime.minute.toString().padLeft(2, '0');
+      final amPm = dateTime.hour >= 12 ? 'PM' : 'AM';
+      
+      return '$day $month, $year    $hour:$minute $amPm';
+    } catch (e) {
+      return '';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,73 +64,37 @@ class _AlertsScreenState extends State<AlertsScreen> {
               title: 'Alerts',
             ),
 
-            // Tab bar
-            Container(
-              decoration: BoxDecoration(
-                color: AppColors.white.withValues(alpha: 0.5),
-                border: Border(bottom: BorderSide(color: AppColors.primary.withValues(alpha: 0.1))),
-              ),
-              child: Row(
-                children: [
-                  _buildTab('All', 0),
-                  _buildTab('Unread', 1),
-                  _buildTab('Important', 2),
-                ],
-              ),
-            ),
-
             // Content
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Refill Reminders section
-                    _sectionTitle('Refill Reminders'),
-                    AlertTile(
-                      icon: Icons.medication_outlined,
-                      title: 'Lipitor refill due in 2 days',
-                      subtitle: '2 hours ago',
-                      trailing: AlertActionButton(label: 'Request'),
-                    ),
-
-                    // Medication Alerts section
-                    const SizedBox(height: 16),
-                    _sectionTitle('Medication Alerts'),
-                    AlertTile(
-                      icon: Icons.alarm,
-                      title: 'Take Vitamin D now',
-                      subtitle: 'Just now',
-                      trailing: AlertActionButton(label: 'Done', filled: false),
-                    ),
-                    AlertTile(
-                      icon: Icons.medication,
-                      title: 'Evening Metformin Dose',
-                      subtitle: 'In 45 minutes',
-                    ),
-
-                    // System Updates section
-                    const SizedBox(height: 16),
-                    _sectionTitle('System Updates'),
-                    AlertTile(
-                      icon: Icons.security,
-                      title: 'New login detected',
-                      subtitle: 'Yesterday, 10:45 PM',
-                      trailing: GestureDetector(
-                        onTap: () {},
-                        child: const Icon(Icons.close, color: AppColors.slate400, size: 20),
-                      ),
-                    ),
-                    AlertTile(
-                      icon: Icons.system_update,
-                      title: 'PresMAI v2.4 Available',
-                      subtitle: '2 days ago',
-                      trailing: AlertActionButton(label: 'Update', filled: false, outlined: true),
-                    ),
-                  ],
-                ),
-              ),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _notifications.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No notifications yet',
+                            style: GoogleFonts.manrope(
+                              color: AppColors.slate500,
+                              fontSize: 16,
+                            ),
+                          ),
+                        )
+                      : RefreshIndicator(
+                          onRefresh: _fetchNotifications,
+                          child: ListView(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            children: [
+                              // Medication Alerts section
+                              _sectionTitle('Medication Alerts'),
+                              ..._notifications.map((notification) {
+                                return AlertTile(
+                                  icon: Icons.alarm,
+                                  title: notification['content'] ?? '',
+                                  subtitle: _formatDateTime(notification['createdAt'] ?? ''),
+                                );
+                              }).toList(),
+                            ],
+                          ),
+                        ),
             ),
 
             // Bottom nav
@@ -101,36 +103,6 @@ class _AlertsScreenState extends State<AlertsScreen> {
               onTabSelected: (tab) => _navigateToTab(context, tab),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTab(String label, int index) {
-    final isActive = _selectedTabIndex == index;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => setState(() => _selectedTabIndex = index),
-        behavior: HitTestBehavior.opaque,
-        child: Container(
-          padding: const EdgeInsets.only(top: 16, bottom: 12),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: isActive ? AppColors.primary : Colors.transparent,
-                width: 2,
-              ),
-            ),
-          ),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.manrope(
-              fontSize: 14,
-              fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-              color: isActive ? AppColors.primary : AppColors.slate500,
-            ),
-          ),
         ),
       ),
     );

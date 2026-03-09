@@ -11,9 +11,13 @@ import 'screens/alerts_screen.dart';
 import 'screens/archive_screen.dart';
 import 'screens/profile_screen.dart';
 
+import 'firebase_options.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await dotenv.load(fileName: ".env");
   
   // Request notification permissions
