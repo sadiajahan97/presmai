@@ -47,6 +47,10 @@ class SignInRequest(BaseModel):
     password: str
 
 
+class FcmTokenRequest(BaseModel):
+    fcm_token: str
+
+
 class UserResponse(BaseModel):
     id: str
     email: str
@@ -116,3 +120,16 @@ async def sign_in(body: SignInRequest, db: Prisma = Depends(get_db)):
         user=user_to_response(user),
         access_token=token,
     )
+
+
+@router.patch("/fcm-token")
+async def update_fcm_token(
+    body: FcmTokenRequest,
+    user_id: str = Depends(verify_access_token),
+    db: Prisma = Depends(get_db),
+):
+    await db.user.update(
+        where={"id": user_id},
+        data={"fcmToken": body.fcm_token},
+    )
+    return {"status": "ok"}

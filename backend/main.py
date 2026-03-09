@@ -16,8 +16,20 @@ from profile import router as profile_router
 from db import set_db
 from notifications import notification_loop
 from vector_db import init_chroma
+import firebase_admin
+from firebase_admin import credentials
 
 prisma = Prisma()
+
+try:
+    firebase_admin.get_app()
+except ValueError:
+    cred_path = "firebase-credentials.json"
+    if os.path.exists(cred_path):
+        cred = credentials.Certificate(cred_path)
+        firebase_admin.initialize_app(cred)
+    else:
+        firebase_admin.initialize_app()
 
 
 @asynccontextmanager

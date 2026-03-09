@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_colors.dart';
@@ -61,6 +62,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() => _isLoading = false);
 
     if (result['success']) {
+      // Get FCM token and update backend
+      try {
+        final token = await FirebaseMessaging.instance.getToken();
+        if (token != null) {
+          await _authService.updateFcmToken(token);
+        }
+      } catch (e) {
+        debugPrint('FCM Token sync failed: $e');
+      }
+      
       Navigator.pushReplacementNamed(context, '/chat');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

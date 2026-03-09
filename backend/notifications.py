@@ -2,9 +2,33 @@ import asyncio
 import logging
 from datetime import datetime, time, timedelta
 
+from firebase_admin import messaging
+
 from db import get_db
 
 logger = logging.getLogger(__name__)
+
+
+async def _send_push_notification(user_id: str, content: str) -> None:
+    db = get_db()
+    user = await db.user.find_unique(where={"id": user_id})
+    if not user or not user.fcmToken:
+        logger.info("Skipping push notification for user %s: no FCM token", user_id)
+        return
+
+    message = messaging.Message(
+        notification=messaging.Notification(
+            title="Medicine Reminder 💊",
+            body=content,
+        ),
+        token=user.fcmToken,
+    )
+
+    try:
+        response = messaging.send(message)
+        logger.info("Push notification sent for user %s (response: %s)", user_id, response)
+    except Exception:
+        logger.exception("Failed to send push notification to user %s", user_id)
 
 SCHEDULE = [
     time(0, 0),
@@ -51,6 +75,7 @@ async def _create_notification(user_id: str, content: str) -> None:
             "userId": user_id,
         }
     )
+    await _send_push_notification(user_id, content)
 
 
 async def _process_morning() -> None:
