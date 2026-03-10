@@ -50,11 +50,14 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
 
       if (diff.inDays == 0) {
         if (diff.inHours == 0) {
-          return 'Modified ${diff.inMinutes} mins ago';
+          final mins = diff.inMinutes;
+          return 'Modified $mins ${mins == 1 ? 'min' : 'mins'} ago';
         }
-        return 'Modified ${diff.inHours} hours ago';
+        final hours = diff.inHours;
+        return 'Modified $hours ${hours == 1 ? 'hour' : 'hours'} ago';
       } else if (diff.inDays < 7) {
-        return 'Modified ${diff.inDays} days ago';
+        final days = diff.inDays;
+        return 'Modified $days ${days == 1 ? 'day' : 'days'} ago';
       } else {
         final months = [
           'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -118,7 +121,16 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel', style: GoogleFonts.manrope(color: AppColors.slate500)),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.slate500,
+              ).copyWith(
+                overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                  (states) => states.contains(WidgetState.hovered)
+                      ? AppColors.slate100
+                      : null,
+                ),
+              ),
+              child: Text('Cancel', style: GoogleFonts.manrope()),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -137,9 +149,13 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.slate900,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: Text('Create', style: GoogleFonts.manrope(color: AppColors.white)),
+              child: Text(
+                'Create', 
+                style: GoogleFonts.manrope(color: AppColors.white),
+              ),
             ),
           ],
         );
@@ -290,6 +306,7 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primary,
+                                foregroundColor: AppColors.slate900,
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -307,17 +324,25 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
                               label: Text(
                                 'Upload',
                                 style: GoogleFonts.manrope(
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.primary,
                                 ),
                               ),
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: AppColors.primaryLight.withValues(alpha: 0.15),
+                                minimumSize: const Size(double.infinity, 56),
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 side: BorderSide(color: AppColors.primary.withValues(alpha: 0.2)),
+                              ).copyWith(
+                                overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                                  (states) => states.contains(WidgetState.hovered)
+                                      ? AppColors.primary.withValues(alpha: 0.08)
+                                      : null,
+                                ),
                               ),
                             ),
                           ),
@@ -326,21 +351,6 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
 
                       const SizedBox(height: 24),
 
-                      // Section title
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: Text(
-                          _currentPath.isEmpty ? 'YOUR FILES' : 'CONTENTS OF ${_currentPath.toUpperCase()}',
-                          style: GoogleFonts.manrope(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.8,
-                            color: AppColors.slate500,
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
 
                       // File list
                       if (_isLoading)

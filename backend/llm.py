@@ -20,8 +20,9 @@ config = types.GenerateContentConfig(
     system_instruction="You are PresMAI, a specialized AI assistant designed to help users manage and understand their medical prescriptions. "
     "Your primary tasks include explaining medication uses, dosage instructions, potential side effects, and "
     "identifying possible drug interactions based on provided information or prescription images or pdf files. "
-    "\n\nRESPONSE FORMAT:\n"
-    "You MUST always respond with a valid JSON object and nothing else. No extra text, no markdown fences. The JSON must contain exactly two fields:\n"
+    "\n\nRESPONSE FORMAT (STRICT):\n"
+    "Your ENTIRE response must be exactly one valid JSON object—nothing before it, nothing after it. No introductory text, no explanation, no markdown (no ```). "
+    "Start your response with { and end with }. The JSON must contain exactly two fields:\n"
     '1. "answer": Your text response to the user. If you use the Google Search grounding tool, include all citations and references WITHIN this text.\n'
     '2. "medications": An array of medication objects. Each object has: "name" (string), "strength" (string or null), '
     '"morning" (boolean), "afternoon" (boolean), "night" (boolean), "days" (integer).\n'
@@ -49,6 +50,40 @@ config = types.GenerateContentConfig(
 )
 
 
+def _extract_json_object(text: str) -> str | None:
+    start = text.find("{")
+    if start == -1:
+        return None
+    depth = 1
+    i = start + 1
+    in_string = False
+    escape = False
+    quote_char = '"'
+    while i < len(text) and depth > 0:
+        c = text[i]
+        if escape:
+            escape = False
+        elif in_string:
+            if c == "\\":
+                escape = True
+            elif c == quote_char:
+                in_string = False
+        else:
+            if c == '"':
+                in_string = True
+                quote_char = c
+            elif c == "{":
+                depth += 1
+            elif c == "}":
+                depth -= 1
+        i += 1
+    return text[start:i] if depth == 0 else None
+
+
+def _fix_common_json_issues(raw: str) -> str:
+    return re.sub(r"([\{\s])(\w+)(\s*):", r'\1"\2"\3:', raw)
+
+
 def parse_llm_json(text: str) -> dict:
     text = text.strip()
     fence_match = re.search(r"```(?:json)?\s*([\s\S]*?)```", text)
@@ -57,7 +92,17 @@ def parse_llm_json(text: str) -> dict:
     try:
         return json.loads(text)
     except (json.JSONDecodeError, TypeError):
-        return {"answer": text, "medications": []}
+        pass
+    extracted = _extract_json_object(text)
+    if extracted:
+        try:
+            return json.loads(extracted)
+        except (json.JSONDecodeError, TypeError):
+            try:
+                return json.loads(_fix_common_json_issues(extracted))
+            except (json.JSONDecodeError, TypeError):
+                pass
+    return {"answer": text, "medications": []}
 
 
 async def generate_response(messages: list[dict], medication_context: str | None = None):

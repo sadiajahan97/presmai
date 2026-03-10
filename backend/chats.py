@@ -154,13 +154,13 @@ async def send_message(
 
     medication_context = None
     if content:
-        med_results = query_medications(content, n_results=5)
+        med_results = query_medications(content, n_results=10)
         if med_results:
             context_parts = []
             for i, (doc, meta) in enumerate(med_results, 1):
                 context_parts.append(f"--- Medication {i} ---\n{doc}")
             medication_context = "\n\n".join(context_parts)
-
+    print(medication_context)
     assistant_response = await generate_response(llm_messages, medication_context=medication_context)
 
     assistant_content = assistant_response.get("answer", "")

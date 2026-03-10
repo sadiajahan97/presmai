@@ -157,7 +157,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
           fontSize: 12,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,
-          color: AppColors.primary,
+          color: AppColors.slate500,
         ),
       ),
     );
