@@ -293,13 +293,11 @@ class ChatBubble extends StatelessWidget {
   Widget _buildFileAttachment(BuildContext context, String path) {
     String fileName = path.split('/').last;
     
-    // Strip UUID prefix (36 chars + underscore) if it exists
+    // Strip prefix (e.g. user_id_ or uuid_) if it exists
     if (fileName.contains('_')) {
       final parts = fileName.split('_');
-      // UUIDs are 36 characters long
-      if (parts[0].length == 36) {
-        fileName = parts.skip(1).join('_');
-      }
+      // Strip everything before the first underscore to show original name
+      fileName = parts.skip(1).join('_');
     }
     
     return GestureDetector(
