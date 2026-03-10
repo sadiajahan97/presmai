@@ -123,61 +123,7 @@ class ArchiveScreen extends StatelessWidget {
                       itemCount: '2 items',
                     ),
 
-                    const SizedBox(height: 32),
 
-                    // Storage card
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.primaryBorder),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Cloud Storage',
-                                style: GoogleFonts.manrope(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.slate900,
-                                ),
-                              ),
-                              Text(
-                                '65% Used',
-                                style: GoogleFonts.manrope(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(9999),
-                            child: LinearProgressIndicator(
-                              value: 0.65,
-                              backgroundColor: AppColors.slate200,
-                              color: AppColors.primary,
-                              minHeight: 8,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Upgrade for more space and automated document sorting.',
-                            style: GoogleFonts.manrope(
-                              fontSize: 10,
-                              color: AppColors.slate500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),

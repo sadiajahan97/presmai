@@ -33,28 +33,67 @@ class _AlertsScreenState extends State<AlertsScreen> {
     });
   }
 
-  String _formatDateTime(String createdAt) {
+  String _getDateHeader(String? createdAt) {
+    if (createdAt == null) return 'Unknown Date';
     try {
       final dateTime = DateTime.parse(createdAt).toLocal();
-      final months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-      ];
-      final month = months[dateTime.month - 1];
-      final day = dateTime.day;
-      final year = dateTime.year;
+      final now = DateTime.now().toLocal();
+      final today = DateTime(now.year, now.month, now.day);
+      final yesterday = today.subtract(const Duration(days: 1));
+      final notificationDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+
+      if (notificationDate == today) {
+        return 'Today';
+      } else if (notificationDate == yesterday) {
+        return 'Yesterday';
+      } else {
+        final months = [
+          'January', 'February', 'March', 'April', 'May', 'June',
+          'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        return '${months[dateTime.month - 1]} ${dateTime.day}, ${dateTime.year}';
+      }
+    } catch (e) {
+      return 'Unknown Date';
+    }
+  }
+
+  String _formatTime(String createdAt) {
+    try {
+      final dateTime = DateTime.parse(createdAt).toLocal();
       final hour = dateTime.hour > 12 ? dateTime.hour - 12 : (dateTime.hour == 0 ? 12 : dateTime.hour);
       final minute = dateTime.minute.toString().padLeft(2, '0');
       final amPm = dateTime.hour >= 12 ? 'PM' : 'AM';
       
-      return '$day $month, $year    $hour:$minute $amPm';
+      return '$hour:$minute $amPm';
     } catch (e) {
       return '';
     }
   }
 
+  Map<String, List<Map<String, dynamic>>> _getGroupedNotifications() {
+    final sorted = List<Map<String, dynamic>>.from(_notifications);
+    sorted.sort((a, b) {
+      final dateA = DateTime.tryParse(a['createdAt'] ?? '') ?? DateTime(0);
+      final dateB = DateTime.tryParse(b['createdAt'] ?? '') ?? DateTime(0);
+      return dateB.compareTo(dateA);
+    });
+
+    final groups = <String, List<Map<String, dynamic>>>{};
+    for (var notification in sorted) {
+      final header = _getDateHeader(notification['createdAt']);
+      if (!groups.containsKey(header)) {
+        groups[header] = [];
+      }
+      groups[header]!.add(notification);
+    }
+    return groups;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final groupedNotifications = _getGroupedNotifications();
+
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SafeArea(
@@ -82,17 +121,18 @@ class _AlertsScreenState extends State<AlertsScreen> {
                           onRefresh: _fetchNotifications,
                           child: ListView(
                             padding: const EdgeInsets.only(bottom: 16),
-                            children: [
-                              // Medication Alerts section
-                              _sectionTitle('Medication Alerts'),
-                              ..._notifications.map((notification) {
-                                return AlertTile(
-                                  icon: Icons.alarm,
-                                  title: notification['content'] ?? '',
-                                  subtitle: _formatDateTime(notification['createdAt'] ?? ''),
-                                );
-                              }).toList(),
-                            ],
+                            children: groupedNotifications.entries.expand((entry) {
+                              return [
+                                _sectionTitle(entry.key),
+                                ...entry.value.map((notification) {
+                                  return AlertTile(
+                                    icon: Icons.alarm,
+                                    title: notification['content'] ?? '',
+                                    subtitle: _formatTime(notification['createdAt'] ?? ''),
+                                  );
+                                }),
+                              ];
+                            }).toList(),
                           ),
                         ),
             ),
