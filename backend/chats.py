@@ -10,6 +10,11 @@ from prisma import Prisma
 from auth import verify_access_token
 from db import get_db
 from llm import generate_response
+from medicines import (
+    extract_alternatives_brand,
+    format_alternatives_context,
+    get_alternatives_by_brand,
+)
 from vector_db import query_medications
 
 router = APIRouter(prefix="/chats", tags=["chats"])
@@ -154,13 +159,22 @@ async def send_message(
 
     medication_context = None
     if content:
-        med_results = query_medications(content, n_results=10)
-        if med_results:
-            context_parts = []
-            for i, (doc, meta) in enumerate(med_results, 1):
-                context_parts.append(f"--- Medication {i} ---\n{doc}")
-            medication_context = "\n\n".join(context_parts)
-    print(medication_context)
+        alternatives_brand = extract_alternatives_brand(content)
+        if alternatives_brand:
+            alt_result = await get_alternatives_by_brand(db, alternatives_brand, max_results=10)
+            if alt_result:
+                medication_context = format_alternatives_context(
+                    alternatives_brand,
+                    alt_result["alternatives"],
+                    alt_result["ingredient"],
+                )
+        if medication_context is None:
+            med_results = query_medications(content, n_results=5)
+            if med_results:
+                context_parts = []
+                for i, (doc, _) in enumerate(med_results, 1):
+                    context_parts.append(f"--- Medication {i} ---\n{doc}")
+                medication_context = "\n\n".join(context_parts)
     assistant_response = await generate_response(llm_messages, medication_context=medication_context)
 
     assistant_content = assistant_response.get("answer", "")

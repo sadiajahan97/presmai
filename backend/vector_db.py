@@ -1,10 +1,11 @@
 import os
 import chromadb
-from chromadb.config import Settings
 from chromadb.api import ClientAPI
 from chromadb.utils import embedding_functions
 
 _client: ClientAPI | None = None
+
+BGE_QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 
 
 def init_chroma() -> ClientAPI:
@@ -35,11 +36,19 @@ def get_collection(name: str):
     )
 
 
+def _prepare_query_text(raw: str) -> str:
+    text = (raw or "").strip()
+    if not text:
+        return text
+    return BGE_QUERY_PREFIX + text
+
+
 def query_medications(query_text: str, n_results: int = 5) -> list[tuple[str, dict]]:
     collection = get_collection("medications")
+    encoded_query = _prepare_query_text(query_text)
 
     results = collection.query(
-        query_texts=[query_text],
+        query_texts=[encoded_query],
         n_results=n_results,
     )
 
