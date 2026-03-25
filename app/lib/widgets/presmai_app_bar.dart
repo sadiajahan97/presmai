@@ -35,44 +35,83 @@ class PresmaiAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Row(
-          children: [
-            Container(
-              constraints: const BoxConstraints(minWidth: 48),
-              child: leading ?? const SizedBox.shrink(),
-            ),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: centerTitle
-                    ? MainAxisAlignment.center
-                    : MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      title,
-                      textAlign:
-                          centerTitle ? TextAlign.center : TextAlign.start,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: GoogleFonts.manrope(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.slate900,
-                        letterSpacing: -0.3,
+        child: centerTitle
+            ? LayoutBuilder(
+                builder: (context, _) {
+                  // Center the title relative to the whole app bar width.
+                  // This prevents "off-center" titles when `trailing` is wider
+                  // than the (optional) `leading`.
+                  return Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          constraints: const BoxConstraints(minWidth: 48),
+                          child: leading ?? const SizedBox.shrink(),
+                        ),
                       ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                          constraints: const BoxConstraints(minWidth: 48),
+                          alignment: Alignment.centerRight,
+                          child: trailing ?? const SizedBox.shrink(),
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          title,
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: GoogleFonts.manrope(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.slate900,
+                            letterSpacing: -0.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              )
+            : Row(
+                children: [
+                  Container(
+                    constraints: const BoxConstraints(minWidth: 48),
+                    child: leading ?? const SizedBox.shrink(),
+                  ),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            title,
+                            textAlign: TextAlign.start,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: GoogleFonts.manrope(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.slate900,
+                              letterSpacing: -0.3,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
+                  Container(
+                    constraints: const BoxConstraints(minWidth: 48),
+                    alignment: Alignment.centerRight,
+                    child: trailing ?? const SizedBox.shrink(),
                   ),
                 ],
               ),
-            ),
-            Container(
-              constraints: const BoxConstraints(minWidth: 48),
-              alignment: Alignment.centerRight,
-              child: trailing ?? const SizedBox.shrink(),
-            ),
-          ],
-        ),
       ),
     );
   }

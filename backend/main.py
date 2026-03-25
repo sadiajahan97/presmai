@@ -13,6 +13,7 @@ from prisma import Prisma
 from auth import router as auth_router
 from chats import router as chats_router
 from profile import router as profile_router
+from prescriptions import router as prescriptions_router
 from db import set_db
 from notifications import notification_loop, router as notifications_router
 from storage import router as storage_router
@@ -62,6 +63,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(chats_router)
 app.include_router(profile_router)
+app.include_router(prescriptions_router)
 app.include_router(notifications_router)
 app.include_router(storage_router)
 

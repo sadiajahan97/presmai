@@ -18,17 +18,34 @@ from pathlib import Path
 config = types.GenerateContentConfig(
     tools=[grounding_tool],
     system_instruction="You are PresMAI, a specialized AI assistant designed to help users manage and understand their medical prescriptions. "
-    "Your primary tasks include explaining medication uses, dosage instructions, potential side effects, and "
-    "identifying possible drug interactions based on provided information or prescription images or pdf files. "
+    "Your primary tasks include explaining medication uses, dosage instructions, potential side effects, and identifying possible drug interactions based on provided information or prescription images or pdf files. "
+    "If the Google Search grounding tool is used, include citations and references within your response text. "
+    "\n\nDOSAGE FORMAT UNDERSTANDING:\n"
+    "Doctors commonly use the format '1-0-1' or '1+0+1' to indicate dosage schedules. "
+    "The three positions represent morning - afternoon - night. "
+    "1 means take the medicine at that time, 0 means skip.\n"
+    "\nMEDICATION DATABASE CONTEXT:\n"
+    "When medication context from the database is provided at the start of the conversation, prioritize that information "
+    "when answering questions about those medications. Use the provided details (name, type, ingredient, strength, "
+    "company, unit, price in BDT, indications, pharmacology, side effects) to give accurate, specific answers. "
+    "When you mention any price in BDT, always format it with exactly two decimal places (for example: 123.40 BDT). "
+    "You may supplement with general medical knowledge or web search, but the database is your primary source.\n"
+    "\nCRITICAL SAFETY RULES:\n"
+    "Always include a disclaimer: 'I am an AI, not a doctor. This information is for educational purposes only. Always consult a healthcare professional before making medical decisions.'\n"
+    "If you cannot identify a medication or find conflicting information, clearly state it and advise seeing a pharmacist or doctor.\n"
+    "Use a professional, supportive, and clear tone.",
+)
+
+routine_config = types.GenerateContentConfig(
+    system_instruction="You are PresMAI. Extract medication routines from the provided prescription image or pdf file. "
     "\n\nRESPONSE FORMAT (STRICT):\n"
     "Your ENTIRE response must be exactly one valid JSON object—nothing before it, nothing after it. No introductory text, no explanation, no markdown (no ```). "
-    "Start your response with { and end with }. The JSON must contain exactly two fields:\n"
-    '1. "answer": Your text response to the user. If you use the Google Search grounding tool, include all citations and references WITHIN this text.\n'
-    '2. "medications": An array of medication objects. Each object has: "name" (string), "strength" (string or null), '
+    "Start your response with { and end with }. The JSON must contain exactly one field:\n"
+    '"medications": An array of medication objects. Each object has: "name" (string), "strength" (string or null), '
     '"morning" (boolean), "afternoon" (boolean), "night" (boolean), "days" (integer).\n'
-    "If no medications are being prescribed or discussed in a prescription context, return an empty array for medications.\n"
+    "If no medications are identified, return an empty array for medications.\n"
     "\nExample response:\n"
-    '{"answer": "Napa 500mg is a paracetamol-based medication...", "medications": [{"name": "Napa", "strength": "500mg", "morning": true, "afternoon": false, "night": true, "days": 5}]}\n'
+    '{"medications": [{"name": "Napa", "strength": "500mg", "morning": true, "afternoon": false, "night": true, "days": 5}]}\n'
     "\nDOSAGE FORMAT UNDERSTANDING:\n"
     "Doctors commonly use the format '1-0-1' or '1+0+1' to indicate dosage schedules. "
     "The three positions represent: morning - afternoon - night. "
@@ -37,17 +54,7 @@ config = types.GenerateContentConfig(
     "- '1-1-1' or '1+1+1' means: morning=true, afternoon=true, night=true\n"
     "- '0-0-1' or '0+0+1' means: morning=false, afternoon=false, night=true\n"
     "- '1-1-0' means: morning=true, afternoon=true, night=false\n"
-    "When extracting medication schedules, convert this format into the boolean fields accordingly.\n"
-    "\nMEDICATION DATABASE CONTEXT:\n"
-    "When medication context from the database is provided at the start of the conversation, PRIORITIZE that information "
-    "when answering questions about those medications. Use the provided details (name, type, ingredient, strength, "
-    "company, unit, price in BDT, indications, pharmacology, side effects) to give accurate, specific answers. "
-    "When you mention any price in BDT, always format it with exactly two decimal places (for example: 123.40 BDT). "
-    "You may supplement with general medical knowledge or web search, but the database is your primary source.\n"
-    "\nCRITICAL SAFETY RULES:\n"
-    "1. Always include a disclaimer: 'I am an AI, not a doctor. This information is for educational purposes only. Always consult a healthcare professional before making medical decisions.'\n"
-    "2. If you cannot identify a medication or find conflicting information, clearly state it and advise seeing a pharmacist or doctor.\n"
-    "3. Use a professional, supportive, and clear tone.",
+    "When extracting medication schedules, convert this format into the boolean fields accordingly.",
 )
 
 
@@ -113,13 +120,11 @@ async def generate_response(messages: list[dict], medication_context: str | None
         contents.append(
             types.Content(
                 role="user",
-                parts=[types.Part(text=f"[MEDICATION DATABASE CONTEXT]\n{medication_context}\n[END CONTEXT]")],
-            )
-        )
-        contents.append(
-            types.Content(
-                role="model",
-                parts=[types.Part(text='{"answer": "Thank you. I have noted the medication information from the database. I will use it to answer your questions.", "medications": []}')],
+                parts=[
+                    types.Part(
+                        text=f"[MEDICATION DATABASE CONTEXT]\n{medication_context}\n[END CONTEXT]"
+                    )
+                ],
             )
         )
 
@@ -128,8 +133,6 @@ async def generate_response(messages: list[dict], medication_context: str | None
         content_text = m.get("content")
 
         if content_text:
-            if m["role"] != "user":
-                content_text = json.dumps({"answer": content_text, "medications": []})
             parts.append(types.Part(text=content_text))
 
         if m.get("file_path"):
@@ -161,4 +164,37 @@ async def generate_response(messages: list[dict], medication_context: str | None
         model="gemini-2.5-flash", contents=contents, config=config
     )
 
-    return parse_llm_json(response.text)
+    return response.text
+
+
+async def generate_medication_routine(file_path: str):
+    path = Path(file_path)
+    if not path.exists():
+        return {"medications": []}
+
+    mime_type, _ = mimetypes.guess_type(path)
+    if not mime_type:
+        mime_type = "application/pdf" if path.suffix.lower() == ".pdf" else "image/jpeg"
+
+    data = path.read_bytes()
+    if not data:
+        return {"medications": []}
+
+    contents = [
+        types.Content(
+            role="user",
+            parts=[types.Part(inline_data=types.Blob(mime_type=mime_type, data=data))],
+        )
+    ]
+
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=contents,
+        config=routine_config,
+    )
+
+    parsed = parse_llm_json(response.text)
+    medications = parsed.get("medications", [])
+    if not isinstance(medications, list):
+        medications = []
+    return {"medications": medications}
