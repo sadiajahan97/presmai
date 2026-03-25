@@ -26,6 +26,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
   final ImagePicker _picker = ImagePicker();
   List<Map<String, dynamic>> _notifications = [];
   bool _isLoading = true;
+  bool _isRoutineLoading = false;
 
   @override
   void initState() {
@@ -40,6 +41,32 @@ class _AlertsScreenState extends State<AlertsScreen> {
       _notifications = notifications;
       _isLoading = false;
     });
+  }
+
+  Future<List<dynamic>> _fetchMedicationsApi() async {
+    final auth = AuthService();
+    final token = await auth.getToken();
+    if (token == null) {
+      throw Exception('Not authenticated');
+    }
+
+    final baseUrl = dotenv.get('API_URL', fallback: 'http://localhost:8000');
+    final uri = Uri.parse('$baseUrl/prescriptions/medications');
+
+    final res = await http.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (res.statusCode != 200 && res.statusCode != 201) {
+      throw Exception('Fetch medications failed (${res.statusCode}): ${res.body}');
+    }
+
+    final data = jsonDecode(res.body);
+    if (data is List) return data;
+    return [];
   }
 
   String _getDateHeader(String? createdAt) {
@@ -111,6 +138,79 @@ class _AlertsScreenState extends State<AlertsScreen> {
             PresmaiAppBar(
               title: 'Alerts',
               centerTitle: true,
+              leading: SizedBox(
+                height: 44,
+                child: TextButton(
+                  onPressed: _isRoutineLoading
+                      ? null
+                      : () async {
+                          setState(() => _isRoutineLoading = true);
+                          try {
+                            final medications = await _fetchMedicationsApi();
+                            if (!mounted) return;
+                            final updated = await Navigator.of(context).pushNamed(
+                              '/medication-routine',
+                              arguments: medications,
+                            );
+                            if (updated == true) {
+                              await _fetchNotifications();
+                            }
+                          } catch (e) {
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Routine failed: $e')),
+                            );
+                          } finally {
+                            if (!mounted) return;
+                            setState(() => _isRoutineLoading = false);
+                          }
+                        },
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(0, 0),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: _isRoutineLoading
+                        ? SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.medication_outlined,
+                                color: AppColors.white,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Routine',
+                                style: GoogleFonts.manrope(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
+                ),
+              ),
               trailing: _buildScanPrescriptionMenu(),
             ),
 

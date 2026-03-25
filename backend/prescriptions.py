@@ -148,3 +148,15 @@ async def update_medication(
     )
 
     return updated
+
+
+@router.get("/medications", response_model=List[MedicationRoutineResponse])
+async def get_medications(
+    user_id: str = Depends(verify_access_token),
+    db: Prisma = Depends(get_db),
+):
+    medications = await db.medication.find_many(
+        where={"userId": user_id},
+        order={"createdAt": "desc"},
+    )
+    return medications
