@@ -11,6 +11,7 @@ import 'screens/sign_up_screen.dart';
 import 'screens/ai_chat_screen.dart';
 import 'screens/alerts_screen.dart';
 import 'screens/archive_screen.dart';
+import 'screens/medication_routine_screen.dart';
 import 'screens/profile_screen.dart';
 
 import 'firebase_options.dart';
@@ -45,7 +46,7 @@ Future<void> main() async {
   ));
 }
 
-const Set<String> _signedInRoutes = <String>{'/chat', '/alerts', '/archive', '/profile'};
+const Set<String> _signedInRoutes = <String>{'/chat', '/alerts', '/archive', '/profile', '/medication-routine'};
 const String _signedOutInitialRoute = '/welcome';
 const String _signedInFallbackRoute = '/chat';
 
@@ -118,6 +119,11 @@ class PresMAIApp extends StatelessWidget {
         '/alerts': (context) => const AlertsScreen(),
         '/archive': (context) => const ArchiveScreen(),
         '/profile': (context) => const ProfileScreen(),
+        '/medication-routine': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments;
+          final medications = (args is List<dynamic>) ? args : <dynamic>[];
+          return MedicationRoutineScreen(medications: medications);
+        },
       },
       navigatorObservers: <NavigatorObserver>[
         AppRouteObserver(prefs),

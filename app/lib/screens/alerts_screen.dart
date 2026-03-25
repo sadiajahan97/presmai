@@ -947,7 +947,15 @@ class _AlertsScreenState extends State<AlertsScreen> {
                                     if (!dialogContext.mounted) return;
                                     Navigator.of(dialogContext).pop();
                                     if (!mounted) return;
-                                    await _showMedicationRoutineDialog(medications);
+                                    final updated = await Navigator.of(context)
+                                        .pushNamed(
+                                      '/medication-routine',
+                                      arguments: medications,
+                                    );
+                                    if (!mounted) return;
+                                    if (updated == true) {
+                                      await _fetchNotifications();
+                                    }
                                   } catch (e) {
                                     if (dialogContext.mounted) {
                                       ScaffoldMessenger.of(dialogContext)
