@@ -1,0 +1,15 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - backend_storage:/app/storage
+      - ./backend/firebase-credentials.json:/app/firebase-credentials.json:ro
+    restart: unless-stopped
+volumes:
+  backend_storage:
