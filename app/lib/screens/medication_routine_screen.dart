@@ -23,6 +23,17 @@ class MedicationRoutineScreen extends StatefulWidget {
 }
 
 class _MedicationRoutineScreenState extends State<MedicationRoutineScreen> {
+  static const _routineFieldDecoration = InputDecoration(
+    filled: true,
+    fillColor: Colors.transparent,
+    border: InputBorder.none,
+    enabledBorder: InputBorder.none,
+    focusedBorder: InputBorder.none,
+    disabledBorder: InputBorder.none,
+    isDense: true,
+    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+  );
+
   late final List<Map<String, dynamic>> _meds;
 
   late final List<String> _editedNames;
@@ -239,6 +250,20 @@ class _MedicationRoutineScreenState extends State<MedicationRoutineScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: Text(
+                              'Here\'s what we have from your prescription. '
+                              'Update anything that doesn\'t match how you actually take your medicine, '
+                              'then tap "Update" when you\'re ready to save.',
+                              style: GoogleFonts.manrope(
+                                color: AppColors.slate600,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                height: 1.45,
+                              ),
+                            ),
+                          ),
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: DataTable(
@@ -303,13 +328,7 @@ class _MedicationRoutineScreenState extends State<MedicationRoutineScreen> {
                                           key: ValueKey('med_name_$i'),
                                           initialValue: _editedNames[i],
                                           onChanged: (v) => _editedNames[i] = v,
-                                          decoration: const InputDecoration(
-                                            isDense: true,
-                                            contentPadding: EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 10,
-                                            ),
-                                          ),
+                                          decoration: _routineFieldDecoration,
                                         ),
                                       ),
                                     ),
@@ -322,13 +341,7 @@ class _MedicationRoutineScreenState extends State<MedicationRoutineScreen> {
                                           initialValue: _editedStrengths[i],
                                           onChanged: (v) =>
                                               _editedStrengths[i] = v,
-                                          decoration: const InputDecoration(
-                                            isDense: true,
-                                            contentPadding: EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 10,
-                                            ),
-                                          ),
+                                          decoration: _routineFieldDecoration,
                                         ),
                                       ),
                                     ),
@@ -395,13 +408,7 @@ class _MedicationRoutineScreenState extends State<MedicationRoutineScreen> {
                                           initialValue: _editedDays[i],
                                           keyboardType: TextInputType.number,
                                           onChanged: (v) => _editedDays[i] = v,
-                                          decoration: const InputDecoration(
-                                            isDense: true,
-                                            contentPadding: EdgeInsets.symmetric(
-                                              horizontal: 8,
-                                              vertical: 10,
-                                            ),
-                                          ),
+                                          decoration: _routineFieldDecoration,
                                         ),
                                       ),
                                     ),

@@ -2,7 +2,7 @@ import os
 import uuid
 import shutil
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -95,3 +95,29 @@ async def upload_file(
         shutil.copyfileobj(file.file, buffer)
         
     return {"message": "File uploaded successfully", "filename": unique_filename}
+
+
+@router.delete("/")
+async def delete_storage_item(
+    rel_path: str = Query(..., alias="path", min_length=1, description="Path relative to user storage root"),
+    user_id: str = Depends(verify_access_token),
+):
+    base_dir = os.path.join(os.getcwd(), "storage", user_id)
+    base_abs = os.path.abspath(base_dir)
+    target = os.path.abspath(os.path.join(base_dir, rel_path))
+
+    if not target.startswith(base_abs):
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    if target == base_abs or target.rstrip(os.sep) == base_abs.rstrip(os.sep):
+        raise HTTPException(status_code=400, detail="Cannot delete storage root")
+
+    if not os.path.lexists(target):
+        raise HTTPException(status_code=404, detail="Not found")
+
+    if os.path.isdir(target):
+        shutil.rmtree(target)
+    else:
+        os.remove(target)
+
+    return {"message": "Deleted successfully"}
