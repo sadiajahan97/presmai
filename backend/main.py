@@ -17,7 +17,7 @@ from prescriptions import router as prescriptions_router
 from db import set_db
 from notifications import notification_loop, router as notifications_router
 from storage import router as storage_router
-from vector_db import init_chroma
+from vector_db import init_qdrant
 import firebase_admin
 from firebase_admin import credentials
 
@@ -38,7 +38,7 @@ except ValueError:
 async def lifespan(app: FastAPI):
     await prisma.connect()
     set_db(prisma)
-    init_chroma()
+    init_qdrant()
     task = asyncio.create_task(notification_loop())
     yield
     task.cancel()

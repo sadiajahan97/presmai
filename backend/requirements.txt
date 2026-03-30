@@ -7,8 +7,9 @@ python-dotenv==1.0.1
 google-genai==1.65.0
 email-validator==2.2.0
 python-multipart==0.0.21
-chromadb==0.6.3
+qdrant-client==1.12.1
 sentence-transformers==2.6.1
 transformers==4.41.2
 torch==2.3.1
 firebase-admin==6.6.0
+tqdm==4.67.1
