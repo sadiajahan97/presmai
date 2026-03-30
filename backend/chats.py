@@ -133,12 +133,13 @@ async def send_message(
         s3_key = f"{user_id}/{filename}"
         file_bytes = await file.read()
         s3_client.put_object(Bucket=AWS_BUCKET_NAME, Key=s3_key, Body=file_bytes)
+        file_path = s3_key
 
     await db.message.create(
         data={
             "chatId": chat_id,
             "content": content,
-            "file_path": s3_key,
+            "file_path": file_path,
             "role": "user",
         }
     )

@@ -138,80 +138,76 @@ class _AlertsScreenState extends State<AlertsScreen> {
             PresmaiAppBar(
               title: 'Alerts',
               centerTitle: true,
-              leading: SizedBox(
-                height: 44,
-                child: TextButton(
-                  onPressed: _isRoutineLoading
-                      ? null
-                      : () async {
-                          setState(() => _isRoutineLoading = true);
-                          try {
-                            final medications = await _fetchMedicationsApi();
-                            if (!mounted) return;
-                            final updated = await Navigator.of(context).pushNamed(
-                              '/medication-routine',
-                              arguments: medications,
-                            );
-                            if (updated == true) {
-                              await _fetchNotifications();
-                            }
-                          } catch (e) {
-                            if (!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Routine failed: $e')),
-                            );
-                          } finally {
-                            if (!mounted) return;
-                            setState(() => _isRoutineLoading = false);
-                          }
-                        },
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: const Size(0, 0),
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
+            ),
+
+            // Action buttons row (below header)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Row(
+                children: [
+                  // Routine button (filled, like New Folder)
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _isRoutineLoading
+                          ? null
+                          : () async {
+                              setState(() => _isRoutineLoading = true);
+                              try {
+                                final medications = await _fetchMedicationsApi();
+                                if (!mounted) return;
+                                final updated = await Navigator.of(context).pushNamed(
+                                  '/medication-routine',
+                                  arguments: medications,
+                                );
+                                if (updated == true) {
+                                  await _fetchNotifications();
+                                }
+                              } catch (e) {
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Routine failed: $e')),
+                                );
+                              } finally {
+                                if (!mounted) return;
+                                setState(() => _isRoutineLoading = false);
+                              }
+                            },
+                      icon: _isRoutineLoading
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Icon(Icons.medication_outlined, color: AppColors.white),
+                      label: Text(
+                        'Routine',
+                        style: GoogleFonts.manrope(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.white,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.slate900,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 4,
+                        shadowColor: AppColors.primaryShadow,
+                      ),
                     ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: _isRoutineLoading
-                        ? SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: const AlwaysStoppedAnimation<Color>(
-                                Colors.white,
-                              ),
-                            ),
-                          )
-                        : Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.medication_outlined,
-                                color: AppColors.white,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                'Routine',
-                                style: GoogleFonts.manrope(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w800,
-                                  color: AppColors.white,
-                                ),
-                              ),
-                            ],
-                          ),
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  // Scan button (outlined, like Upload)
+                  Expanded(
+                    child: _buildScanPrescriptionButton(),
+                  ),
+                ],
               ),
-              trailing: _buildScanPrescriptionMenu(),
             ),
 
             // Content
@@ -309,9 +305,9 @@ class _AlertsScreenState extends State<AlertsScreen> {
     }
   }
 
-  Widget _buildScanPrescriptionMenu() {
+  Widget _buildScanPrescriptionButton() {
     return PopupMenuButton<String>(
-      offset: const Offset(0, 40),
+      offset: const Offset(0, 56),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       color: AppColors.white,
       elevation: 4,
@@ -322,32 +318,36 @@ class _AlertsScreenState extends State<AlertsScreen> {
         _buildPopupItem(Icons.attach_file_outlined, 'Files', 'files'),
       ],
       onSelected: (value) {
-        // Do not await here; PopupMenuButton expects a synchronous callback.
         _handleScanOption(value);
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.qr_code_scanner_outlined, color: AppColors.white, size: 20),
-            const SizedBox(width: 10),
-            Text(
-              'Scan',
-              style: GoogleFonts.manrope(
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
-                color: AppColors.white,
-              ),
+      child: IgnorePointer(
+        child: OutlinedButton.icon(
+          onPressed: () {}, // visual only; taps handled by PopupMenuButton above
+          icon: const Icon(Icons.qr_code_scanner_outlined, color: AppColors.primary),
+          label: Text(
+            'Scan',
+            style: GoogleFonts.manrope(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: AppColors.primary,
             ),
-          ],
+          ),
+          style: OutlinedButton.styleFrom(
+            backgroundColor: AppColors.primaryLight.withValues(alpha: 0.15),
+            minimumSize: const Size(double.infinity, 56),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            side: BorderSide(color: AppColors.primary.withValues(alpha: 0.2)),
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildScanPrescriptionMenu() {
+    return _buildScanPrescriptionButton();
   }
 
   void _handleScanOption(String value) {

@@ -27,9 +27,9 @@ class PrimaryButton extends StatelessWidget {
           ? OutlinedButton(
               onPressed: onPressed,
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.slate900,
-                backgroundColor: AppColors.slate200,
-                side: BorderSide(color: AppColors.slate300),
+                foregroundColor: AppColors.primary,
+                backgroundColor: AppColors.primaryLight.withValues(alpha: 0.15),
+                side: BorderSide(color: AppColors.primary.withValues(alpha: 0.2)),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -40,7 +40,7 @@ class PrimaryButton extends StatelessWidget {
                       height: 24,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.slate900),
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
                       ),
                     )
                   : Text(
@@ -48,6 +48,7 @@ class PrimaryButton extends StatelessWidget {
                       style: GoogleFonts.manrope(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
+                        color: AppColors.primary,
                       ),
                     ),
             )

@@ -229,6 +229,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             value: _termsAccepted,
                             onChanged: (v) => setState(() => _termsAccepted = v ?? false),
                             activeColor: AppColors.primary,
+                            checkColor: AppColors.white,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                             side: const BorderSide(color: AppColors.slate200),
                           ),
