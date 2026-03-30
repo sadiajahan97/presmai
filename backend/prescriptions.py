@@ -1,4 +1,5 @@
 import os
+import tempfile
 import uuid
 from datetime import datetime
 from typing import List
@@ -10,6 +11,7 @@ from prisma import Prisma
 from auth import verify_access_token
 from db import get_db
 from llm import generate_medication_routine
+from s3 import AWS_BUCKET_NAME, s3_client
 
 router = APIRouter(prefix="/prescriptions", tags=["prescriptions"])
 
@@ -53,18 +55,24 @@ async def scan_prescription(
     if not file:
         raise HTTPException(status_code=400, detail="File is required")
 
-    storage_dir = os.path.join(os.getcwd(), "storage", user_id)
-    os.makedirs(storage_dir, exist_ok=True)
-
     original_filename = file.filename if file.filename else "unknown"
     filename = f"{uuid.uuid4()}_{original_filename}"
-    rel_path = f"storage/{user_id}/{filename}"
-    abs_path = os.path.join(os.getcwd(), rel_path)
-    with open(abs_path, "wb") as output_file:
-        bytes_data = await file.read()
+    bytes_data = await file.read()
+
+    tmp_dir = os.path.join(tempfile.gettempdir(), user_id)
+    os.makedirs(tmp_dir, exist_ok=True)
+    tmp_path = os.path.join(tmp_dir, filename)
+    with open(tmp_path, "wb") as output_file:
         output_file.write(bytes_data)
 
-    routine = await generate_medication_routine(abs_path)
+    routine = await generate_medication_routine(tmp_path)
+
+    s3_key = f"{user_id}/{filename}"
+    s3_client.put_object(Bucket=AWS_BUCKET_NAME, Key=s3_key, Body=bytes_data)
+    try:
+        os.remove(tmp_path)
+    except OSError:
+        pass
     medications = routine.get("medications", [])
     if not isinstance(medications, list):
         medications = []

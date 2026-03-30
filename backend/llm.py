@@ -15,6 +15,10 @@ grounding_tool = types.Tool(
 import mimetypes
 from pathlib import Path
 
+from botocore.exceptions import ClientError
+
+from s3 import AWS_BUCKET_NAME, s3_client
+
 config = types.GenerateContentConfig(
     tools=[grounding_tool],
     system_instruction="You are PresMAI, a specialized AI assistant designed to help users manage and understand their medical prescriptions. "
@@ -136,7 +140,8 @@ async def generate_response(messages: list[dict], medication_context: str | None
             parts.append(types.Part(text=content_text))
 
         if m.get("file_path"):
-            file_path = Path(m["file_path"])
+            file_path_str = str(m["file_path"])
+            file_path = Path(file_path_str)
             if file_path.exists():
                 mime_type, _ = mimetypes.guess_type(file_path)
                 if not mime_type:
@@ -149,6 +154,26 @@ async def generate_response(messages: list[dict], medication_context: str | None
                 parts.append(
                     types.Part(inline_data=types.Blob(mime_type=mime_type, data=data))
                 )
+            else:
+                s3_key = file_path_str.lstrip("/")
+                try:
+                    obj = s3_client.get_object(Bucket=AWS_BUCKET_NAME, Key=s3_key)
+                    data = obj["Body"].read()
+
+                    guessed_type, _ = mimetypes.guess_type(s3_key)
+                    if not guessed_type:
+                        suffix = Path(s3_key).suffix.lower()
+                        guessed_type = (
+                            "application/pdf" if suffix == ".pdf" else "image/jpeg"
+                        )
+
+                    parts.append(
+                        types.Part(
+                            inline_data=types.Blob(mime_type=guessed_type, data=data)
+                        )
+                    )
+                except ClientError:
+                    pass
 
         if not parts:
             continue

@@ -58,9 +58,6 @@ def _create_qdrant_client() -> QdrantClient:
     if url:
         api_key = (os.environ.get("QDRANT_API_KEY") or "").strip() or None
         return QdrantClient(url=url, api_key=api_key, timeout=timeout)
-    persist_directory = os.path.join(os.getcwd(), "storage", "qdrant")
-    os.makedirs(persist_directory, exist_ok=True)
-    return QdrantClient(path=persist_directory, timeout=timeout)
 
 
 def init_qdrant() -> QdrantClient:

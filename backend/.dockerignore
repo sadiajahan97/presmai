@@ -1,8 +1,6 @@
 Dockerfile
 .env
-firebase-credentials.json
 .git
 .gitignore
 __pycache__
-storage
 venv

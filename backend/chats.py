@@ -1,4 +1,3 @@
-import os
 import uuid
 from datetime import datetime
 from typing import List
@@ -10,6 +9,7 @@ from prisma import Prisma
 from auth import verify_access_token
 from db import get_db
 from llm import generate_response
+from s3 import AWS_BUCKET_NAME, s3_client
 from medicines import (
     extract_alternatives_brand,
     format_alternatives_context,
@@ -128,23 +128,17 @@ async def send_message(
 
     file_path = None
     if file:
-        storage_dir = os.path.join(os.getcwd(), "storage", user_id)
-        os.makedirs(storage_dir, exist_ok=True)
-
         original_filename = file.filename if file.filename else "unknown"
         filename = f"{uuid.uuid4()}_{original_filename}"
-        rel_path = f"storage/{user_id}/{filename}"
-        abs_path = os.path.join(os.getcwd(), rel_path)
-        with open(abs_path, "wb") as f:
-            f.write(await file.read())
-
-        file_path = rel_path
+        s3_key = f"{user_id}/{filename}"
+        file_bytes = await file.read()
+        s3_client.put_object(Bucket=AWS_BUCKET_NAME, Key=s3_key, Body=file_bytes)
 
     await db.message.create(
         data={
             "chatId": chat_id,
             "content": content,
-            "file_path": file_path,
+            "file_path": s3_key,
             "role": "user",
         }
     )
