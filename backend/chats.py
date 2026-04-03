@@ -109,8 +109,8 @@ async def list_messages(
         where={"chatId": chat_id}, order={"createdAt": "asc"}
     )
     for m in messages:
-        if m.file_path and not m.file_path.startswith("/"):
-            m.file_path = f"/{m.file_path}"
+        if m.file_path:
+            m.file_path = f"storage/{m.file_path}"
     return messages
 
 

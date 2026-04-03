@@ -59,20 +59,10 @@ async def scan_prescription(
     filename = f"{uuid.uuid4()}_{original_filename}"
     bytes_data = await file.read()
 
-    tmp_dir = os.path.join(tempfile.gettempdir(), user_id)
-    os.makedirs(tmp_dir, exist_ok=True)
-    tmp_path = os.path.join(tmp_dir, filename)
-    with open(tmp_path, "wb") as output_file:
-        output_file.write(bytes_data)
-
-    routine = await generate_medication_routine(tmp_path)
+    routine = await generate_medication_routine(bytes_data, original_filename)
 
     s3_key = f"{user_id}/{filename}"
     s3_client.put_object(Bucket=AWS_BUCKET_NAME, Key=s3_key, Body=bytes_data)
-    try:
-        os.remove(tmp_path)
-    except OSError:
-        pass
     medications = routine.get("medications", [])
     if not isinstance(medications, list):
         medications = []

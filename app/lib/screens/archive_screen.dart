@@ -168,11 +168,11 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
     if (path.startsWith('/') && !path.contains('/storage/')) return path;
     
     final baseUrl = dotenv.get('API_URL', fallback: 'http://localhost:8000');
-    if (path.contains('/storage/')) {
-      final parts = path.split('/storage/');
+    if (path.contains('storage/')) {
+      final parts = path.split('storage/');
       return '$baseUrl/storage/${parts.last}';
     }
-    return '$baseUrl/$path';
+    return '$baseUrl/storage/$path'; // Prepend storage
   }
 
   Future<void> _handleOpenFile(BuildContext context, String path) async {

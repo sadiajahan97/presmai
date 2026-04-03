@@ -141,39 +141,25 @@ async def generate_response(messages: list[dict], medication_context: str | None
 
         if m.get("file_path"):
             file_path_str = str(m["file_path"])
-            file_path = Path(file_path_str)
-            if file_path.exists():
-                mime_type, _ = mimetypes.guess_type(file_path)
-                if not mime_type:
-                    mime_type = (
-                        "application/pdf"
-                        if file_path.suffix.lower() == ".pdf"
-                        else "image/jpeg"
+            s3_key = file_path_str
+            try:
+                obj = s3_client.get_object(Bucket=AWS_BUCKET_NAME, Key=s3_key)
+                data = obj["Body"].read()
+
+                guessed_type, _ = mimetypes.guess_type(s3_key)
+                if not guessed_type:
+                    suffix = Path(s3_key).suffix.lower()
+                    guessed_type = (
+                        "application/pdf" if suffix == ".pdf" else "image/jpeg"
                     )
-                data = file_path.read_bytes()
+
                 parts.append(
-                    types.Part(inline_data=types.Blob(mime_type=mime_type, data=data))
-                )
-            else:
-                s3_key = file_path_str.lstrip("/")
-                try:
-                    obj = s3_client.get_object(Bucket=AWS_BUCKET_NAME, Key=s3_key)
-                    data = obj["Body"].read()
-
-                    guessed_type, _ = mimetypes.guess_type(s3_key)
-                    if not guessed_type:
-                        suffix = Path(s3_key).suffix.lower()
-                        guessed_type = (
-                            "application/pdf" if suffix == ".pdf" else "image/jpeg"
-                        )
-
-                    parts.append(
-                        types.Part(
-                            inline_data=types.Blob(mime_type=guessed_type, data=data)
-                        )
+                    types.Part(
+                        inline_data=types.Blob(mime_type=guessed_type, data=data)
                     )
-                except ClientError:
-                    pass
+                )
+            except ClientError:
+                pass
 
         if not parts:
             continue
@@ -192,18 +178,14 @@ async def generate_response(messages: list[dict], medication_context: str | None
     return response.text
 
 
-async def generate_medication_routine(file_path: str):
-    path = Path(file_path)
-    if not path.exists():
+async def generate_medication_routine(data: bytes, filename: str):
+    if not data:
         return {"medications": []}
 
+    path = Path(filename)
     mime_type, _ = mimetypes.guess_type(path)
     if not mime_type:
         mime_type = "application/pdf" if path.suffix.lower() == ".pdf" else "image/jpeg"
-
-    data = path.read_bytes()
-    if not data:
-        return {"medications": []}
 
     contents = [
         types.Content(
