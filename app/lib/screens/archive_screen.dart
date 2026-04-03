@@ -107,7 +107,11 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text(
             'New Folder',
-            style: GoogleFonts.manrope(fontWeight: FontWeight.w700),
+            style: GoogleFonts.manrope(
+              fontSize: 20, 
+              fontWeight: FontWeight.w800, 
+              color: AppColors.slate900,
+            ),
           ),
           content: TextField(
             controller: controller,
@@ -119,43 +123,64 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
             autofocus: true,
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.slate500,
-              ).copyWith(
-                overlayColor: WidgetStateProperty.resolveWith<Color?>(
-                  (states) => states.contains(WidgetState.hovered)
-                      ? AppColors.slate100
-                      : null,
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final name = controller.text.trim();
+                      if (name.isNotEmpty) {
+                        final success = await _storageService.createFolder(name, currentFolder: _currentPath);
+                        if (success && mounted) {
+                          Navigator.pop(context);
+                          _fetchFiles();
+                        } else if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Failed to create folder')),
+                          );
+                        }
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      minimumSize: const Size(0, 44),
+                    ),
+                    child: Text(
+                      'Create', 
+                      style: GoogleFonts.manrope(
+                        fontSize: 16, 
+                        fontWeight: FontWeight.w700, 
+                        color: AppColors.white,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              child: Text('Cancel', style: GoogleFonts.manrope()),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final name = controller.text.trim();
-                if (name.isNotEmpty) {
-                  final success = await _storageService.createFolder(name, currentFolder: _currentPath);
-                  if (success && mounted) {
-                    Navigator.pop(context);
-                    _fetchFiles();
-                  } else if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Failed to create folder')),
-                    );
-                  }
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.slate900,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              child: Text(
-                'Create', 
-                style: GoogleFonts.manrope(color: AppColors.white),
-              ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.slate900,
+                      backgroundColor: AppColors.slate200,
+                      side: BorderSide(color: AppColors.slate300),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      minimumSize: const Size(0, 44),
+                    ),
+                    child: Text(
+                      'Cancel', 
+                      style: GoogleFonts.manrope(
+                        fontSize: 16, 
+                        fontWeight: FontWeight.w700, 
+                        color: AppColors.slate600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         );
@@ -265,6 +290,98 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
     _fetchFiles();
   }
 
+  Future<void> _handleDelete(String path, String name) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Delete Item', 
+          style: GoogleFonts.manrope(
+            fontSize: 20, 
+            fontWeight: FontWeight.w800, 
+            color: AppColors.slate900,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to delete "$name"? This action cannot be undone.', 
+          style: GoogleFonts.manrope(
+            fontSize: 16, 
+            fontWeight: FontWeight.w500, 
+            color: AppColors.slate600,
+          ),
+        ),
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.error,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    minimumSize: const Size(0, 44),
+                  ),
+                  child: Text(
+                    'Delete', 
+                    style: GoogleFonts.manrope(
+                      fontSize: 16, 
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.slate900,
+                    backgroundColor: AppColors.slate200,
+                    side: BorderSide(color: AppColors.slate300),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    minimumSize: const Size(0, 44),
+                  ),
+                  child: Text(
+                    'Cancel', 
+                    style: GoogleFonts.manrope(
+                      fontSize: 16, 
+                      fontWeight: FontWeight.w700, 
+                      color: AppColors.slate600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      setState(() => _isLoading = true);
+      final success = await _storageService.deleteItem(path);
+      if (mounted) {
+        setState(() => _isLoading = false);
+        if (success) {
+          _fetchFiles();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Item deleted successfully')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to delete item')),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -274,10 +391,6 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
           children: [
             PresmaiAppBar(
               title: _currentPath.isEmpty ? 'Archive' : _currentPath.split('/').last,
-              leading: _currentPath.isNotEmpty ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: AppColors.slate900),
-                onPressed: _goBack,
-              ) : null,
             ),
 
             // Content
@@ -337,12 +450,6 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 side: BorderSide(color: AppColors.primary.withValues(alpha: 0.2)),
-                              ).copyWith(
-                                overlayColor: WidgetStateProperty.resolveWith<Color?>(
-                                  (states) => states.contains(WidgetState.hovered)
-                                      ? AppColors.primary.withValues(alpha: 0.08)
-                                      : null,
-                                ),
                               ),
                             ),
                           ),
@@ -373,13 +480,15 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
                         )
                       else
                         ..._files.map((file) {
+                          final cleanName = _getCleanName(file['name']);
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 12.0),
                             child: FolderTile(
                               icon: _getFileIcon(file['name'], file['is_dir']),
-                              name: _getCleanName(file['name']),
+                              name: cleanName,
                               modifiedDate: _formatDate(file['modified_at']),
                               itemCount: file['is_dir'] ? 'Folder' : _formatSize(file['size']),
+                              onDelete: () => _handleDelete(file['path'], cleanName),
                               onTap: () {
                                 if (file['is_dir']) {
                                   setState(() {

@@ -22,9 +22,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   
   bool _termsAccepted = false;
   bool _isLoading = false;
-  bool _hoverTerms = false;
-  bool _hoverPrivacy = false;
-  bool _hoverSignIn = false;
 
   Future<void> _handleSignUp() async {
     final name = _nameController.text.trim();
@@ -102,10 +99,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                 child: Row(
                   children: [
-                    IconButton(
-                      onPressed: () => Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false),
-                      icon: const Icon(Icons.arrow_back, color: AppColors.slate900),
-                    ),
+
                     Expanded(
                       child: Text(
                         'PresMAI',
@@ -117,7 +111,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 48), // balance
+
                   ],
                 ),
               ),
@@ -231,7 +225,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             activeColor: AppColors.primary,
                             checkColor: AppColors.white,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                            side: const BorderSide(color: AppColors.slate200),
+                            side: const BorderSide(color: AppColors.primary),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -248,22 +242,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 WidgetSpan(
                                   alignment: PlaceholderAlignment.baseline,
                                   baseline: TextBaseline.alphabetic,
-                                  child: MouseRegion(
-                                    onEnter: (_) => setState(() => _hoverTerms = true),
-                                    onExit: (_) => setState(() => _hoverTerms = false),
-                                    cursor: SystemMouseCursors.click,
-                                    child: GestureDetector(
-                                      onTap: () {},
-                                      child: Text(
-                                        'Terms of Service',
-                                        style: GoogleFonts.manrope(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.primary,
-                                          decoration: _hoverTerms ? TextDecoration.underline : TextDecoration.none,
-                                          decorationColor: AppColors.primary,
-                                          decorationThickness: 5.0,
-                                        ),
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: Text(
+                                      'Terms of Service',
+                                      style: GoogleFonts.manrope(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.primary,
+                                        decoration: TextDecoration.none,
                                       ),
                                     ),
                                   ),
@@ -272,22 +259,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 WidgetSpan(
                                   alignment: PlaceholderAlignment.baseline,
                                   baseline: TextBaseline.alphabetic,
-                                  child: MouseRegion(
-                                    onEnter: (_) => setState(() => _hoverPrivacy = true),
-                                    onExit: (_) => setState(() => _hoverPrivacy = false),
-                                    cursor: SystemMouseCursors.click,
-                                    child: GestureDetector(
-                                      onTap: () {},
-                                      child: Text(
-                                        'Privacy Policy',
-                                        style: GoogleFonts.manrope(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.primary,
-                                          decoration: _hoverPrivacy ? TextDecoration.underline : TextDecoration.none,
-                                          decorationColor: AppColors.primary,
-                                          decorationThickness: 5.0,
-                                        ),
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: Text(
+                                      'Privacy Policy',
+                                      style: GoogleFonts.manrope(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.primary,
+                                        decoration: TextDecoration.none,
                                       ),
                                     ),
                                   ),
@@ -320,22 +300,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       'Already have an account? ',
                       style: GoogleFonts.manrope(fontSize: 14, color: AppColors.slate600),
                     ),
-                    MouseRegion(
-                      onEnter: (_) => setState(() => _hoverSignIn = true),
-                      onExit: (_) => setState(() => _hoverSignIn = false),
-                      cursor: SystemMouseCursors.click,
-                      child: GestureDetector(
-                        onTap: () => Navigator.pushReplacementNamed(context, '/signin'),
-                        child: Text(
-                          'Sign In',
-                          style: GoogleFonts.manrope(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.primary,
-                            decoration: _hoverSignIn ? TextDecoration.underline : TextDecoration.none,
-                            decorationColor: AppColors.primary,
-                            decorationThickness: 5.0,
-                          ),
+                    GestureDetector(
+                      onTap: () => Navigator.pushReplacementNamed(context, '/signin'),
+                      child: Text(
+                        'Sign In',
+                        style: GoogleFonts.manrope(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                          decoration: TextDecoration.none,
                         ),
                       ),
                     ),

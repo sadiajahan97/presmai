@@ -21,11 +21,16 @@ class AppTheme {
         bodyColor: AppColors.slate900,
         displayColor: AppColors.slate900,
       ),
+      hoverColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      focusColor: Colors.transparent,
       textSelectionTheme: const TextSelectionThemeData(
         cursorColor: AppColors.slate900,
         selectionColor: AppColors.slate200,
         selectionHandleColor: AppColors.slate900,
       ),
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.backgroundLight,
         elevation: 0,
@@ -58,11 +63,13 @@ class AppTheme {
           fontSize: 14,
         ),
         hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.slate900,
+          overlayColor: Colors.transparent,
           elevation: 4,
           shadowColor: AppColors.primaryShadow,
           minimumSize: const Size(double.infinity, 56),
@@ -73,6 +80,45 @@ class AppTheme {
             fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
+        ).copyWith(
+          mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          overlayColor: Colors.transparent,
+        ).copyWith(
+          mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          overlayColor: Colors.transparent,
+        ).copyWith(
+          mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          hoverColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+        ).copyWith(
+          mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
+        ),
+      ),
+      popupMenuTheme: const PopupMenuThemeData(
+        mouseCursor: WidgetStatePropertyAll(SystemMouseCursors.basic),
+      ),
+      menuBarTheme: MenuBarThemeData(
+        style: MenuStyle(
+          mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
+        ),
+      ),
+      menuButtonTheme: MenuButtonThemeData(
+        style: MenuItemButton.styleFrom(
+          overlayColor: Colors.transparent,
+        ).copyWith(
+          mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
         ),
       ),
     );

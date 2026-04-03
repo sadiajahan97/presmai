@@ -158,3 +158,17 @@ async def get_medications(
         order={"createdAt": "desc"},
     )
     return medications
+
+
+@router.delete("/medications/{medication_id}")
+async def delete_medication(
+    medication_id: str,
+    user_id: str = Depends(verify_access_token),
+    db: Prisma = Depends(get_db),
+):
+    medication = await db.medication.find_unique(where={"id": medication_id})
+    if not medication or medication.userId != user_id:
+        raise HTTPException(status_code=404, detail="Medication not found")
+
+    await db.medication.delete(where={"id": medication_id})
+    return {"success": True}

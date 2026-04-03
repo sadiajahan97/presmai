@@ -30,9 +30,12 @@ class PrimaryButton extends StatelessWidget {
                 foregroundColor: AppColors.primary,
                 backgroundColor: AppColors.primaryLight.withValues(alpha: 0.15),
                 side: BorderSide(color: AppColors.primary.withValues(alpha: 0.2)),
+                overlayColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+              ).copyWith(
+                mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
               ),
               child: isLoading
                   ? const SizedBox(
@@ -59,9 +62,12 @@ class PrimaryButton extends StatelessWidget {
                 foregroundColor: AppColors.slate900,
                 elevation: 4,
                 shadowColor: AppColors.primaryShadow,
+                overlayColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+              ).copyWith(
+                mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
               ),
               child: isLoading
                   ? const SizedBox(

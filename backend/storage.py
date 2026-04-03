@@ -177,6 +177,11 @@ async def delete_storage_item(
     if not rel_path_norm:
         raise HTTPException(status_code=400, detail="Cannot delete storage root")
 
+    if rel_path_norm.startswith(f"{user_id}/"):
+        rel_path_norm = rel_path_norm[len(user_id) + 1 :]
+    elif rel_path_norm == user_id:
+        raise HTTPException(status_code=400, detail="Cannot delete storage root")
+
     base_prefix = f"{user_id}/"
     file_key = f"{base_prefix}{rel_path_norm}"
     dir_prefix = f"{file_key}/"

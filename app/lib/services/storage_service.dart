@@ -69,4 +69,23 @@ class StorageService {
     }
   }
 
+  Future<bool> deleteItem(String path) async {
+    try {
+      final token = await _authService.getToken();
+      if (token == null) return false;
+
+      final encodedPath = Uri.encodeComponent(path);
+      final response = await http.delete(
+        Uri.parse('$baseUrl/?path=$encodedPath'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
 }

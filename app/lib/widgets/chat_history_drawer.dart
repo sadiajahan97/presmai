@@ -121,11 +121,14 @@ class _ChatHistoryDrawerState extends State<ChatHistoryDrawer> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
+                    overlayColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     elevation: 4,
                     shadowColor: AppColors.primaryShadow,
+                  ).copyWith(
+                    mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
                   ),
                 ),
               ),
@@ -181,6 +184,7 @@ class _ChatHistoryDrawerState extends State<ChatHistoryDrawer> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: InkWell(
+        mouseCursor: SystemMouseCursors.basic,
         onTap: () {
           Navigator.pop(context); // Close drawer
           Navigator.pushReplacement(
@@ -231,17 +235,73 @@ class _ChatHistoryDrawerState extends State<ChatHistoryDrawer> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Chat'),
-        content: const Text('Are you sure you want to delete this chat?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+        backgroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Delete Chat',
+          style: GoogleFonts.manrope(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: AppColors.slate900,
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
-            child: const Text('Delete'),
+        ),
+        content: Text(
+          'Are you sure you want to delete this chat?',
+          style: GoogleFonts.manrope(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: AppColors.slate600,
+          ),
+        ),
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.error,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    minimumSize: const Size(0, 44),
+                  ),
+                  child: Text(
+                    'Delete',
+                    style: GoogleFonts.manrope(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.slate900,
+                    backgroundColor: AppColors.slate200,
+                    side: BorderSide(color: AppColors.slate300),
+                    overlayColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    minimumSize: const Size(0, 44),
+                  ).copyWith(
+                    mouseCursor: WidgetStateProperty.all(SystemMouseCursors.basic),
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: GoogleFonts.manrope(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.slate600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -272,26 +332,20 @@ class _DeleteChatButton extends StatefulWidget {
 }
 
 class _DeleteChatButtonState extends State<_DeleteChatButton> {
-  bool _isHovered = false;
-
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: IconButton(
-        icon: Icon(
-          _isHovered ? Icons.delete : Icons.delete_outline,
-          size: 18,
-          color: Colors.redAccent,
-        ),
-        padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(),
-        onPressed: widget.onPressed,
-        hoverColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        splashColor: Colors.transparent,
+    return IconButton(
+      icon: const Icon(
+        Icons.delete_outline,
+        size: 18,
+        color: AppColors.error,
       ),
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(),
+      onPressed: widget.onPressed,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
     );
   }
 }

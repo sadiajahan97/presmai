@@ -216,37 +216,31 @@ class _HoverPopupItem extends StatefulWidget {
 }
 
 class _HoverPopupItemState extends State<_HoverPopupItem> {
-  bool _isHovered = false;
-
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: _isHovered ? AppColors.slate50 : Colors.transparent,
-        ),
-        child: Row(
-          children: [
-            Icon(
-              widget.icon,
-              size: 20,
-              color: _isHovered ? AppColors.primary : AppColors.slate500,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: const BoxDecoration(
+        color: Colors.transparent,
+      ),
+      child: Row(
+        children: [
+          Icon(
+            widget.icon,
+            size: 20,
+            color: AppColors.slate500,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            widget.text,
+            style: GoogleFonts.manrope(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.slate900,
             ),
-            const SizedBox(width: 12),
-            Text(
-              widget.text,
-              style: GoogleFonts.manrope(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: _isHovered ? AppColors.primary : AppColors.slate900,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -260,28 +254,22 @@ class _HoverAddButton extends StatefulWidget {
 }
 
 class _HoverAddButtonState extends State<_HoverAddButton> {
-  bool _isHovered = false;
-
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: _isHovered ? AppColors.primary : AppColors.slate200,
-            width: _isHovered ? 2 : 1,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.slate200,
+          width: 1,
         ),
-        padding: _isHovered ? const EdgeInsets.all(7) : const EdgeInsets.all(8),
-        child: Icon(
-          Icons.add,
-          color: _isHovered ? AppColors.primary : AppColors.slate500,
-          size: 24,
-        ),
+      ),
+      padding: const EdgeInsets.all(8),
+      child: Icon(
+        Icons.add,
+        color: AppColors.slate500,
+        size: 24,
       ),
     );
   }
@@ -298,24 +286,17 @@ class _HoverIconButton extends StatefulWidget {
 }
 
 class _HoverIconButtonState extends State<_HoverIconButton> {
-  bool _isHovered = false;
-
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      cursor: SystemMouseCursors.click,
-      child: IconButton(
-        onPressed: widget.onPressed,
-        icon: Icon(widget.icon, size: 22),
-        color: _isHovered ? AppColors.primary : AppColors.slate500,
-        padding: const EdgeInsets.all(8),
-        constraints: const BoxConstraints(),
-        hoverColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        splashColor: Colors.transparent,
-      ),
+    return IconButton(
+      onPressed: widget.onPressed,
+      icon: Icon(widget.icon, size: 22),
+      color: AppColors.slate500,
+      padding: const EdgeInsets.all(8),
+      constraints: const BoxConstraints(),
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
     );
   }
 }

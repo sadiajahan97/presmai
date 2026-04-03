@@ -19,8 +19,6 @@ class _SignInScreenState extends State<SignInScreen> {
   final _passwordController = TextEditingController();
   final _authService = AuthService();
   bool _isLoading = false;
-  bool _hoverForgot = false;
-  bool _hoverSignUp = false;
 
   Future<void> _handleSignIn() async {
     final email = _emailController.text.trim();
@@ -75,17 +73,7 @@ class _SignInScreenState extends State<SignInScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Header with back button
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    onPressed: () => Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false),
-                    icon: const Icon(Icons.arrow_back, color: AppColors.slate900),
-                  ),
-                ),
-              ),
+              const SizedBox(height: 16),
 
               // Hero image banner
               Padding(
@@ -157,22 +145,15 @@ class _SignInScreenState extends State<SignInScreen> {
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: MouseRegion(
-                        onEnter: (_) => setState(() => _hoverForgot = true),
-                        onExit: (_) => setState(() => _hoverForgot = false),
-                        cursor: SystemMouseCursors.click,
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            'Forgot Password?',
-                            style: GoogleFonts.manrope(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primary,
-                              decoration: _hoverForgot ? TextDecoration.underline : TextDecoration.none,
-                              decorationColor: AppColors.primary,
-                              decorationThickness: 5.0,
-                            ),
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: Text(
+                          'Forgot Password?',
+                          style: GoogleFonts.manrope(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primary,
+                            decoration: TextDecoration.none,
                           ),
                         ),
                       ),
@@ -200,22 +181,15 @@ class _SignInScreenState extends State<SignInScreen> {
                       color: AppColors.slate600,
                     ),
                   ),
-                  MouseRegion(
-                    onEnter: (_) => setState(() => _hoverSignUp = true),
-                    onExit: (_) => setState(() => _hoverSignUp = false),
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: () => Navigator.pushReplacementNamed(context, '/signup'),
-                      child: Text(
-                        'Sign Up',
-                        style: GoogleFonts.manrope(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
-                          decoration: _hoverSignUp ? TextDecoration.underline : TextDecoration.none,
-                          decorationColor: AppColors.primary,
-                          decorationThickness: 5.0,
-                        ),
+                  GestureDetector(
+                    onTap: () => Navigator.pushReplacementNamed(context, '/signup'),
+                    child: Text(
+                      'Sign Up',
+                      style: GoogleFonts.manrope(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primary,
+                        decoration: TextDecoration.none,
                       ),
                     ),
                   ),

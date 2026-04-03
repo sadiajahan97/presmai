@@ -29,4 +29,5 @@ class AppColors {
   // Functional
   static const Color white = Colors.white;
   static const Color black = Colors.black;
+  static const Color error = Color(0xFFEF4444); // Red-500
 }

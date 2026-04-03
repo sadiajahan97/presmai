@@ -563,7 +563,11 @@ class _AlertsScreenState extends State<AlertsScreen> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text(
             'Medication Routine',
-            style: GoogleFonts.manrope(fontWeight: FontWeight.w800),
+            style: GoogleFonts.manrope(
+              fontSize: 20, 
+              fontWeight: FontWeight.w800, 
+              color: AppColors.slate900,
+            ),
           ),
           content: hasMeds
               ? SizedBox(
@@ -839,7 +843,9 @@ class _AlertsScreenState extends State<AlertsScreen> {
                                     : Text(
                                         'Update Routine',
                                         style: GoogleFonts.manrope(
-                                          fontWeight: FontWeight.w800,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.white,
                                         ),
                                       ),
                               ),
@@ -903,7 +909,11 @@ class _AlertsScreenState extends State<AlertsScreen> {
               ),
               title: Text(
                 'Preview ($pickerLabel)',
-                style: GoogleFonts.manrope(fontWeight: FontWeight.w800),
+                style: GoogleFonts.manrope(
+                  fontSize: 20, 
+                  fontWeight: FontWeight.w800, 
+                  color: AppColors.slate900,
+                ),
               ),
               content: SingleChildScrollView(
                 child: Column(
@@ -971,36 +981,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                         ),
                       )
                     else
-                      Container(
-                        width: 240,
-                        height: 160,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppColors.slate50,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.slate200),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.picture_as_pdf_outlined,
-                              color: AppColors.primary,
-                              size: 44,
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              'Selected file',
-                              style: GoogleFonts.manrope(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w800,
-                                color: AppColors.primary,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
+                      const SizedBox.shrink(),
 
                     const SizedBox(height: 14),
                     Text(
@@ -1026,105 +1007,104 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 ),
               ),
               actions: [
-                SizedBox(
-                  height: 40,
-                  width: double.infinity,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: isLoading
-                              ? null
-                              : () async {
-                                  setState(() => isLoading = true);
-                                  try {
-                                    final medications =
-                                        await _scanPrescriptionApi(
-                                      fileBytes: fileBytes,
-                                      fileName: fileName,
-                                      mimeType: mimeType,
-                                    );
-                                    if (!dialogContext.mounted) return;
-                                    Navigator.of(dialogContext).pop();
-                                    if (!mounted) return;
-                                    final updated = await Navigator.of(context)
-                                        .pushNamed(
-                                      '/medication-routine',
-                                      arguments: medications,
-                                    );
-                                    if (!mounted) return;
-                                    if (updated == true) {
-                                      await _fetchNotifications();
-                                    }
-                                  } catch (e) {
-                                    if (dialogContext.mounted) {
-                                      ScaffoldMessenger.of(dialogContext)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content:
-                                              Text('Scan failed: $e'),
-                                        ),
-                                      );
-                                    }
-                                    setState(() => isLoading = false);
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                                setState(() => isLoading = true);
+                                try {
+                                  final medications =
+                                      await _scanPrescriptionApi(
+                                    fileBytes: fileBytes,
+                                    fileName: fileName,
+                                    mimeType: mimeType,
+                                  );
+                                  if (!dialogContext.mounted) return;
+                                  Navigator.of(dialogContext).pop();
+                                  if (!mounted) return;
+                                  final updated = await Navigator.of(context)
+                                      .pushNamed(
+                                    '/medication-routine',
+                                    arguments: medications,
+                                  );
+                                  if (!mounted) return;
+                                  if (updated == true) {
+                                    await _fetchNotifications();
                                   }
-                                },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.zero,
-                            minimumSize: const Size(0, 40),
+                                } catch (e) {
+                                  if (dialogContext.mounted) {
+                                    ScaffoldMessenger.of(dialogContext)
+                                        .showSnackBar(
+                                      SnackBar(
+                                        content:
+                                            Text('Scan failed: $e'),
+                                      ),
+                                    );
+                                  }
+                                  setState(() => isLoading = false);
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          child: isLoading
-                              ? const SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor:
-                                        AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
-                                    ),
-                                  ),
-                                )
-                              : Text(
-                                  'Confirm',
-                                  style: GoogleFonts.manrope(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w800,
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(0, 44),
+                        ),
+                        child: isLoading
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor:
+                                      AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
                                   ),
                                 ),
+                              )
+                            : Text(
+                                'Confirm',
+                                style: GoogleFonts.manrope(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.white,
+                                ),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: isLoading
+                            ? null
+                            : () => Navigator.of(dialogContext).pop(),
+                        style: TextButton.styleFrom(
+                          foregroundColor: AppColors.slate900,
+                          backgroundColor: AppColors.slate200,
+                          side: BorderSide(color: AppColors.slate300),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(0, 44),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: GoogleFonts.manrope(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.slate600,
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: TextButton(
-                          onPressed: isLoading
-                              ? null
-                              : () => Navigator.of(dialogContext).pop(),
-                          style: TextButton.styleFrom(
-                            foregroundColor: AppColors.slate900,
-                            backgroundColor: AppColors.slate200,
-                            side: BorderSide(color: AppColors.slate300),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: EdgeInsets.zero,
-                            minimumSize: const Size(0, 40),
-                          ),
-                          child: Text(
-                            'Cancel',
-                            style: GoogleFonts.manrope(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             );
@@ -1146,38 +1126,33 @@ class _HoverPopupItem extends StatefulWidget {
 }
 
 class _HoverPopupItemState extends State<_HoverPopupItem> {
-  bool _isHovered = false;
-
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: _isHovered ? AppColors.slate50 : Colors.transparent,
-        ),
-        child: Row(
-          children: [
-            Icon(
-              widget.icon,
-              size: 20,
-              color: _isHovered ? AppColors.primary : AppColors.slate500,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: const BoxDecoration(
+        color: Colors.transparent,
+      ),
+      child: Row(
+        children: [
+          Icon(
+            widget.icon,
+            size: 20,
+            color: AppColors.slate500,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            widget.text,
+            style: GoogleFonts.manrope(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.slate900,
             ),
-            const SizedBox(width: 12),
-            Text(
-              widget.text,
-              style: GoogleFonts.manrope(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: _isHovered ? AppColors.primary : AppColors.slate900,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+

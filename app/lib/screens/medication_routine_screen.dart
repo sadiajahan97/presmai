@@ -206,6 +206,130 @@ class _MedicationRoutineScreenState extends State<MedicationRoutineScreen> {
     }
   }
 
+  Future<void> _handleDeleteMedication(int index) async {
+    final medicationId = _meds[index]['id']?.toString() ?? '';
+    if (medicationId.isEmpty) return;
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Delete Medication',
+          style: GoogleFonts.manrope(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: AppColors.slate900,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to remove this medication from your routine?',
+          style: GoogleFonts.manrope(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: AppColors.slate600,
+          ),
+        ),
+        actions: [
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.error,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    minimumSize: const Size(0, 44),
+                  ),
+                  child: Text(
+                    'Delete',
+                    style: GoogleFonts.manrope(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.slate900,
+                    backgroundColor: AppColors.slate200,
+                    side: const BorderSide(color: AppColors.slate300),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    minimumSize: const Size(0, 44),
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: GoogleFonts.manrope(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.slate600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    setState(() => _isUpdatingAll = true);
+    try {
+      final auth = AuthService();
+      final token = await auth.getToken();
+      if (token == null) throw Exception('Not authenticated');
+
+      final baseUrl = dotenv.get('API_URL', fallback: 'http://localhost:8000');
+      final uri = Uri.parse('$baseUrl/prescriptions/medications/$medicationId');
+
+      final res = await http.delete(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (res.statusCode != 200) {
+        throw Exception('Delete failed (${res.statusCode})');
+      }
+
+      if (!mounted) return;
+      setState(() {
+        _meds.removeAt(index);
+        _editedNames.removeAt(index);
+        _editedStrengths.removeAt(index);
+        _editedDays.removeAt(index);
+        _editedMorning.removeAt(index);
+        _editedAfternoon.removeAt(index);
+        _editedNight.removeAt(index);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Medication deleted.')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Delete failed: $e')),
+      );
+    } finally {
+      if (!mounted) return;
+      setState(() => _isUpdatingAll = false);
+    }
+  }
+
   void _navigateToTab(NavTab tab) {
     switch (tab) {
       case NavTab.chat:
@@ -316,6 +440,14 @@ class _MedicationRoutineScreenState extends State<MedicationRoutineScreen> {
                                     ),
                                   ),
                                 ),
+                                DataColumn(
+                                  label: SizedBox(
+                                    width: 60,
+                                    child: Center(
+                                      child: Text(''),
+                                    ),
+                                  ),
+                                ),
                               ],
                               rows: List.generate(_meds.length, (i) {
                                 return DataRow(
@@ -325,7 +457,7 @@ class _MedicationRoutineScreenState extends State<MedicationRoutineScreen> {
                                         width: 220,
                                         child: TextFormField(
                                           enabled: !_isUpdatingAll,
-                                          key: ValueKey('med_name_$i'),
+                                          key: ValueKey('med_name_${_meds[i]['id']}'),
                                           initialValue: _editedNames[i],
                                           onChanged: (v) => _editedNames[i] = v,
                                           decoration: _routineFieldDecoration,
@@ -337,7 +469,7 @@ class _MedicationRoutineScreenState extends State<MedicationRoutineScreen> {
                                         width: 140,
                                         child: TextFormField(
                                           enabled: !_isUpdatingAll,
-                                          key: ValueKey('med_strength_$i'),
+                                          key: ValueKey('med_strength_${_meds[i]['id']}'),
                                           initialValue: _editedStrengths[i],
                                           onChanged: (v) =>
                                               _editedStrengths[i] = v,
@@ -351,6 +483,14 @@ class _MedicationRoutineScreenState extends State<MedicationRoutineScreen> {
                                         child: Center(
                                           child: Checkbox(
                                             value: _editedMorning[i],
+                                            activeColor: AppColors.primary,
+                                            checkColor: AppColors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(4),
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.primary,
+                                            ),
                                             onChanged: _isUpdatingAll
                                                 ? null
                                                 : (v) {
@@ -369,6 +509,14 @@ class _MedicationRoutineScreenState extends State<MedicationRoutineScreen> {
                                         child: Center(
                                           child: Checkbox(
                                             value: _editedAfternoon[i],
+                                            activeColor: AppColors.primary,
+                                            checkColor: AppColors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(4),
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.primary,
+                                            ),
                                             onChanged: _isUpdatingAll
                                                 ? null
                                                 : (v) {
@@ -387,6 +535,14 @@ class _MedicationRoutineScreenState extends State<MedicationRoutineScreen> {
                                         child: Center(
                                           child: Checkbox(
                                             value: _editedNight[i],
+                                            activeColor: AppColors.primary,
+                                            checkColor: AppColors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(4),
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.primary,
+                                            ),
                                             onChanged: _isUpdatingAll
                                                 ? null
                                                 : (v) {
@@ -404,11 +560,32 @@ class _MedicationRoutineScreenState extends State<MedicationRoutineScreen> {
                                         width: 100,
                                         child: TextFormField(
                                           enabled: !_isUpdatingAll,
-                                          key: ValueKey('med_days_$i'),
+                                          key: ValueKey('med_days_${_meds[i]['id']}'),
                                           initialValue: _editedDays[i],
                                           keyboardType: TextInputType.number,
                                           onChanged: (v) => _editedDays[i] = v,
                                           decoration: _routineFieldDecoration,
+                                        ),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      SizedBox(
+                                        width: 60,
+                                        child: Center(
+                                          child: MouseRegion(
+                                            cursor: SystemMouseCursors.basic,
+                                            child: GestureDetector(
+                                              onTap: _isUpdatingAll
+                                                  ? null
+                                                  : () =>
+                                                      _handleDeleteMedication(i),
+                                              child: const Icon(
+                                                Icons.delete_outline,
+                                                color: Colors.red,
+                                                size: 20,
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
