@@ -41,7 +41,7 @@ def _user_prefix(user_id: str, folder: str) -> str:
     return f"{user_id}/"
 
 
-def _user_rel_path(user_id: str, folder: str, child_name: str) -> str:
+def _user_rel_path(folder: str, child_name: str) -> str:
     folder_rel = _normalize_rel_path(folder)
     if folder_rel:
         return f"{folder_rel}/{child_name}"
@@ -72,7 +72,7 @@ async def list_files(folder: str = "", user_id: str = Depends(verify_access_toke
             is_dir = rel_key.endswith("/") and "/" not in rel_key[:-1]
             if is_dir:
                 child_name = rel_key[:-1]
-                rel_to_user = _user_rel_path(user_id=user_id, folder=folder, child_name=child_name)
+                rel_to_user = _user_rel_path(folder=folder, child_name=child_name)
                 app_path = f"{user_id}/{rel_to_user}"
                 files.append(
                     FileInfo(
@@ -89,7 +89,7 @@ async def list_files(folder: str = "", user_id: str = Depends(verify_access_toke
                 continue
 
             child_name = rel_key
-            rel_to_user = _user_rel_path(user_id=user_id, folder=folder, child_name=child_name)
+            rel_to_user = _user_rel_path(folder=folder, child_name=child_name)
             app_path = f"{user_id}/{rel_to_user}"
             files.append(
                 FileInfo(
