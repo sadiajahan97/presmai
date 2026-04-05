@@ -14,4 +14,4 @@ RUN pip install --no-cache-dir --extra-index-url https://download.pytorch.org/wh
 COPY prisma ./prisma
 RUN python -m prisma generate
 COPY . .
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT}"]
+CMD ["sh", "-c", "python -m prisma migrate deploy && uvicorn main:app --host 0.0.0.0 --port ${PORT}"]
